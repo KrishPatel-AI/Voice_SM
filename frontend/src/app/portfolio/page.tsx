@@ -17,7 +17,7 @@ import {
   BarChart2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AssetAllocation } from "@/components/dashboard/asset-allocation";
+import { AssetAllocation } from "@/components/portfolio/asset-allocation";
 import { PortfolioPerformance } from "@/components/portfolio/portfolio-performance";
 
 const Portfolio = () => {

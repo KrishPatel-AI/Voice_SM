@@ -1,4 +1,4 @@
-import { StockComparison } from "@/components/dashboard/stock-comparison";
+import { StockComparison } from "@/components/compare/stock-comparison";
 import {
   Card,
   CardContent,
@@ -9,8 +9,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, BarChart, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ComparisonMetrics } from "@/components/dashboard/comparison-metrics";
-import { ComparisonHistory } from "@/components/dashboard/comparison-history";
+import { ComparisonMetrics } from "@/components/compare/comparison-metrics";
+import { ComparisonHistory } from "@/components/compare/comparison-history";
 
 const Compare = () => {
   return (

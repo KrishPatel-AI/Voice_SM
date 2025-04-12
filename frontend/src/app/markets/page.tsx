@@ -1,6 +1,8 @@
 import { Metadata } from "next";
+
 import { MarketSummary } from "@/components/market/market-summary";
 import { NewsFeed } from "@/components/market/news-feed";
+
 import {
   Card,
   CardContent,
@@ -10,8 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart2, TrendingUp, Globe, Newspaper } from "lucide-react";
+
 import { MarketSectors } from "@/components/market/market-sectors";
 import { GlobalIndices } from "@/components/market/global-indices";
+
 
 export const metadata: Metadata = {
   title: "Markets - StockWhisper",

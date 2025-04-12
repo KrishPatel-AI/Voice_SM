@@ -1,4 +1,4 @@
-import { PortfolioSimulator } from "@/components/portfolio/portfolio-simulator";
+import { PortfolioSimulator } from '@/components/dashboard/portfolio-simulator';
 import {
   Card,
   CardContent,
@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   PieChart,
   LineChart,
@@ -15,6 +15,7 @@ import {
   Wallet,
   DollarSign,
   BarChart2,
+
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AssetAllocation } from "@/components/portfolio/asset-allocation";
@@ -22,22 +23,22 @@ import { PortfolioPerformance } from "@/components/portfolio/portfolio-performan
 
 const Portfolio = () => {
   return (
-    <div className="container px-12 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold flex items-center">
-          <Wallet className="mr-2 h-7 w-7 text-primary" />
+    <div className='container px-12 py-8'>
+      <div className='mb-6'>
+        <h1 className='text-2xl font-bold flex items-center'>
+          <Wallet className='mr-2 h-7 w-7 text-primary' />
           Portfolio
         </h1>
-        <p className="text-muted-foreground">
+        <p className='text-muted-foreground'>
           Simulate and track your investment portfolio
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 mb-8">
+      <div className='grid grid-cols-1 gap-6 mb-8'>
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl flex items-center">
-              <DollarSign className="mr-2 h-5 w-5 text-primary" />
+          <CardHeader className='pb-2'>
+            <CardTitle className='text-xl flex items-center'>
+              <DollarSign className='mr-2 h-5 w-5 text-primary' />
               Portfolio Summary
             </CardTitle>
             <CardDescription>
@@ -45,40 +46,40 @@ const Portfolio = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="shadow-none bg-muted/50">
-                <CardContent className="p-4">
-                  <div className="text-sm text-muted-foreground">
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+              <Card className='shadow-none bg-muted/50'>
+                <CardContent className='p-4'>
+                  <div className='text-sm text-muted-foreground'>
                     Total Value
                   </div>
-                  <div className="text-2xl font-bold">$28,750.42</div>
-                  <div className="flex items-center mt-1 text-stock-up text-sm">
-                    <TrendingUp className="h-4 w-4 mr-1" />
+                  <div className='text-2xl font-bold'>$28,750.42</div>
+                  <div className='flex items-center mt-1 text-stock-up text-sm'>
+                    <TrendingUp className='h-4 w-4 mr-1' />
                     +$345.89 (1.22%) Today
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-none bg-muted/50">
-                <CardContent className="p-4">
-                  <div className="text-sm text-muted-foreground">
+              <Card className='shadow-none bg-muted/50'>
+                <CardContent className='p-4'>
+                  <div className='text-sm text-muted-foreground'>
                     Total Gain/Loss
                   </div>
-                  <div className="text-2xl font-bold">+$3,628.15</div>
-                  <div className="flex items-center mt-1 text-stock-up text-sm">
-                    <TrendingUp className="h-4 w-4 mr-1" />
+                  <div className='text-2xl font-bold'>+$3,628.15</div>
+                  <div className='flex items-center mt-1 text-stock-up text-sm'>
+                    <TrendingUp className='h-4 w-4 mr-1' />
                     +14.43% All-time
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-none bg-muted/50">
-                <CardContent className="p-4">
-                  <div className="text-sm text-muted-foreground">
+              <Card className='shadow-none bg-muted/50'>
+                <CardContent className='p-4'>
+                  <div className='text-sm text-muted-foreground'>
                     Annual Dividend
                   </div>
-                  <div className="text-2xl font-bold">$632.51</div>
-                  <div className="text-sm text-muted-foreground mt-1">
+                  <div className='text-2xl font-bold'>$632.51</div>
+                  <div className='text-sm text-muted-foreground mt-1'>
                     2.2% Yield
                   </div>
                 </CardContent>
@@ -88,18 +89,18 @@ const Portfolio = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="positions" className="mb-8">
-        <TabsList className="w-full grid grid-cols-4 mb-6 max-w-md">
-          <TabsTrigger value="positions">Positions</TabsTrigger>
-          <TabsTrigger value="allocation">Allocation</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="simulator">Simulator</TabsTrigger>
+      <Tabs defaultValue='positions' className='mb-8'>
+        <TabsList className='w-full grid grid-cols-4 mb-6 max-w-md'>
+          <TabsTrigger value='positions'>Positions</TabsTrigger>
+          <TabsTrigger value='allocation'>Allocation</TabsTrigger>
+          <TabsTrigger value='performance'>Performance</TabsTrigger>
+          <TabsTrigger value='simulator'>Simulator</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="positions">
+        <TabsContent value='positions'>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl">Portfolio Holdings</CardTitle>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-xl'>Portfolio Holdings</CardTitle>
               <CardDescription>
                 Current positions and performance
               </CardDescription>
@@ -108,18 +109,18 @@ const Portfolio = () => {
               <PortfolioHoldings />
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="ml-auto">
+              <Button variant='outline' className='ml-auto'>
                 Export Portfolio Data
               </Button>
             </CardFooter>
           </Card>
         </TabsContent>
 
-        <TabsContent value="allocation">
+        <TabsContent value='allocation'>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl flex items-center">
-                <PieChart className="mr-2 h-5 w-5 text-primary" />
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-xl flex items-center'>
+                <PieChart className='mr-2 h-5 w-5 text-primary' />
                 Asset Allocation
               </CardTitle>
               <CardDescription>
@@ -132,11 +133,11 @@ const Portfolio = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="performance">
+        <TabsContent value='performance'>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl flex items-center">
-                <LineChart className="mr-2 h-5 w-5 text-primary" />
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-xl flex items-center'>
+                <LineChart className='mr-2 h-5 w-5 text-primary' />
                 Portfolio Performance
               </CardTitle>
               <CardDescription>
@@ -149,11 +150,11 @@ const Portfolio = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="simulator">
+        <TabsContent value='simulator'>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl flex items-center">
-                <BarChart2 className="mr-2 h-5 w-5 text-primary" />
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-xl flex items-center'>
+                <BarChart2 className='mr-2 h-5 w-5 text-primary' />
                 Portfolio Simulator
               </CardTitle>
               <CardDescription>
@@ -173,8 +174,8 @@ const Portfolio = () => {
 function PortfolioHoldings() {
   const holdings = [
     {
-      symbol: "AAPL",
-      name: "Apple Inc.",
+      symbol: 'AAPL',
+      name: 'Apple Inc.',
       shares: 25,
       price: 187.68,
       value: 4692.0,
@@ -182,8 +183,8 @@ function PortfolioHoldings() {
       change: 13.73,
     },
     {
-      symbol: "MSFT",
-      name: "Microsoft Corp.",
+      symbol: 'MSFT',
+      name: 'Microsoft Corp.',
       shares: 15,
       price: 407.54,
       value: 6113.1,
@@ -191,8 +192,8 @@ function PortfolioHoldings() {
       change: 16.59,
     },
     {
-      symbol: "GOOGL",
-      name: "Alphabet Inc.",
+      symbol: 'GOOGL',
+      name: 'Alphabet Inc.',
       shares: 20,
       price: 156.28,
       value: 3125.6,
@@ -200,8 +201,8 @@ function PortfolioHoldings() {
       change: 7.91,
     },
     {
-      symbol: "AMZN",
-      name: "Amazon.com Inc.",
+      symbol: 'AMZN',
+      name: 'Amazon.com Inc.',
       shares: 12,
       price: 183.05,
       value: 2196.6,
@@ -209,8 +210,8 @@ function PortfolioHoldings() {
       change: 12.97,
     },
     {
-      symbol: "NVDA",
-      name: "NVIDIA Corp.",
+      symbol: 'NVDA',
+      name: 'NVIDIA Corp.',
       shares: 8,
       price: 950.02,
       value: 7600.16,
@@ -218,8 +219,8 @@ function PortfolioHoldings() {
       change: 33.8,
     },
     {
-      symbol: "JPM",
-      name: "JPMorgan Chase",
+      symbol: 'JPM',
+      name: 'JPMorgan Chase',
       shares: 18,
       price: 196.47,
       value: 3536.46,
@@ -227,8 +228,8 @@ function PortfolioHoldings() {
       change: 11.13,
     },
     {
-      symbol: "JNJ",
-      name: "Johnson & Johnson",
+      symbol: 'JNJ',
+      name: 'Johnson & Johnson',
       shares: 10,
       price: 152.53,
       value: 1525.3,
@@ -238,32 +239,32 @@ function PortfolioHoldings() {
   ];
 
   return (
-    <div className="rounded-md border">
-      <table className="w-full">
+    <div className='rounded-md border'>
+      <table className='w-full'>
         <thead>
-          <tr className="border-b bg-muted/50">
-            <th className="text-left p-3 pl-4">Symbol</th>
-            <th className="text-left p-3">Name</th>
-            <th className="text-right p-3">Shares</th>
-            <th className="text-right p-3">Price</th>
-            <th className="text-right p-3">Value</th>
-            <th className="text-right p-3 pr-4">Gain/Loss</th>
+          <tr className='border-b bg-muted/50'>
+            <th className='text-left p-3 pl-4'>Symbol</th>
+            <th className='text-left p-3'>Name</th>
+            <th className='text-right p-3'>Shares</th>
+            <th className='text-right p-3'>Price</th>
+            <th className='text-right p-3'>Value</th>
+            <th className='text-right p-3 pr-4'>Gain/Loss</th>
           </tr>
         </thead>
         <tbody>
           {holdings.map((stock) => (
-            <tr key={stock.symbol} className="border-b hover:bg-muted/30">
-              <td className="p-3 pl-4 font-medium">{stock.symbol}</td>
-              <td className="p-3">{stock.name}</td>
-              <td className="p-3 text-right">{stock.shares}</td>
-              <td className="p-3 text-right">${stock.price.toFixed(2)}</td>
-              <td className="p-3 text-right">${stock.value.toFixed(2)}</td>
+            <tr key={stock.symbol} className='border-b hover:bg-muted/30'>
+              <td className='p-3 pl-4 font-medium'>{stock.symbol}</td>
+              <td className='p-3'>{stock.name}</td>
+              <td className='p-3 text-right'>{stock.shares}</td>
+              <td className='p-3 text-right'>${stock.price.toFixed(2)}</td>
+              <td className='p-3 text-right'>${stock.value.toFixed(2)}</td>
               <td
                 className={`p-3 pr-4 text-right ${
-                  stock.change >= 0 ? "text-stock-up" : "text-stock-down"
+                  stock.change >= 0 ? 'text-stock-up' : 'text-stock-down'
                 }`}
               >
-                {stock.change >= 0 ? "+" : ""}
+                {stock.change >= 0 ? '+' : ''}
                 {stock.change.toFixed(2)}%
               </td>
             </tr>

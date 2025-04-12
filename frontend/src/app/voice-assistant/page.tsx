@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 
 import { VoiceInterface } from "@/components/voice-assistant/voice-interface";
-import { AboutSection } from "@/components/voice-assistant/about-section";
-import { SampleQueries } from "@/components/voice-assistant/sample-queries";
+
 import { Brain } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -23,16 +22,10 @@ export default function VoiceAssistant() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <VoiceInterface />
         </div>
 
-        <div className="space-y-6">
-          <AboutSection />
-          <SampleQueries />
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { PortfolioSimulator } from '@/components/dashboard/portfolio-simulator';
+import { PortfolioSimulator } from '@/components/portfolio/portfolio-simulator';
 import {
   Card,
   CardContent,

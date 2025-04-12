@@ -9,9 +9,11 @@ import {
 } from '@/components/ui/card';
 
 import { Button } from '@/components/ui/button';
-import { MarketSummary } from '@/components/dashboard/market-summary';
+
+import { MarketSummary } from '@/components/market/market-summary';
 import { StockList } from '@/components/dashboard/stock-list';
-import { NewsFeed } from '@/components/dashboard/news-feed';
+import { NewsFeed } from '@/components/market/news-feed';
+
 import Link from 'next/link';
 import {
   LineChart,

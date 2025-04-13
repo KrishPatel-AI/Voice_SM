@@ -1,9 +1,17 @@
-import { LoginForm } from '@/components/login/login-form';
+import { LoginForm } from "@/components/authenication/login-form";
+import Link from "next/link";
 
 export default function Page() {
   return (
-    <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
-      <div className='w-full max-w-sm'>
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6  p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-2">
+        <Link
+          href="/"
+          className="flex items-center self-center font-bold text-2xl"
+        >
+          <span className="text-primary">Voice</span>SM
+        </Link>
+
         <LoginForm />
       </div>
     </div>

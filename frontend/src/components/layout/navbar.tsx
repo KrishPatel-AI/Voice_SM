@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import ProfileNamePlate from '../avatar/avatar';
+import ProfileNamePlate from '../authenication/avatar';
 
 export function Navbar() {
   return (
@@ -119,19 +119,19 @@ export function Navbar() {
           </nav>
         </div>
         <div className='flex items-center gap-2'>
+          {/* <Link href='/voice-assistant'>
+            <Button size='sm' className='hidden sm:flex'>
+            <Mic className='h-4 w-4 mr-2' />
+            Voice Assistant
+            </Button>
+            </Link> */}
           <Link href='/login'>
-            <Button variant='outline'>login</Button>
+            <Button variant='outline'>Log In</Button>
           </Link>
           <Link href='/signup'>
-            <Button>signup</Button>
+            <Button>Sign Up </Button>
           </Link>
           <ThemeToggle />
-          <Link href='/voice-assistant'>
-            <Button size='sm' className='hidden sm:flex'>
-              <Mic className='h-4 w-4 mr-2' />
-              Voice Assistant
-            </Button>
-          </Link>
 
           <ProfileNamePlate />
         </div>

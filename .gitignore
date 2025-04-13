@@ -8,7 +8,7 @@ frontend/out/
 # --- Python / Backend ---
 backend/__pycache__/
 backend/env/
-backend/venv/
+backend_py/venv/
 *.pyc
 
 # --- General ---

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -116,7 +118,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes textPulse {
+  0%,
+  100% {
+    color: var(--muted-foreground);
+  }
+
+  50% {
+    color: var(--primary);
+  }
+}
+
+.animate-text-pulse {
+  animation: textPulse 3s ease-in-out infinite;
 }

@@ -1,19 +1,32 @@
 import { TranscriptDisplay } from "./transcript-display";
 import { ResponseDisplay } from "./response-display";
-import { EmptyState } from "./empty-state";
 
-interface MessageProps {
-  transcript: string;
-  response: string;
+interface Message {
+  type: 'user' | 'assistant';
+  content: string;
+  stockData?: any;
+  timestamp: Date;
 }
 
-export function MessageDisplay({ transcript, response }: MessageProps) {
-  return (
-    <div className="w-full max-w-3xl space-y-4">
-      <TranscriptDisplay transcript={transcript} />
-      <ResponseDisplay response={response} />
+interface MessageDisplayProps {
+  messages: Message[];
+}
 
-      {!transcript && !response && <EmptyState />}
+export function MessageDisplay({ messages }: MessageDisplayProps) {
+  return (
+    <div className="w-full space-y-6">
+      {messages.map((message, index) => (
+        <div key={index} className="space-y-4">
+          {message.type === 'user' ? (
+            <TranscriptDisplay transcript={message.content} />
+          ) : (
+            <ResponseDisplay 
+              response={message.content} 
+              stockData={message.stockData}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

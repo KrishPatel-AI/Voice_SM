@@ -11,7 +11,10 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export function LoginForm({
   className,
@@ -19,17 +22,46 @@ export function LoginForm({
 }: React.ComponentProps<'div'>) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setErrorMessage('');
 
-    // Send data to backend
-    const formData = { email, password };
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false, // Let us handle navigation manually.
+      });
 
-    // Replace the following console.log with your backend API call
-    console.log(formData);
+      if (result?.error) {
+        setErrorMessage(result.error || 'Invalid credentials');
+        toast.error(result.error || 'Login failed. Please try again.');
+      } else {
+        toast.success('Welcome back!');
+        router.push('/'); // Redirect to home page
+      }
+    } catch (error: any) {
+      setErrorMessage('Something went wrong.');
+      toast.error('Login failed.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (!isClient) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -43,6 +75,15 @@ export function LoginForm({
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className='flex flex-col gap-6'>
+              {errorMessage && (
+                <div
+                  className='bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative'
+                  role='alert'
+                >
+                  <span className='block sm:inline'>{errorMessage}</span>
+                </div>
+              )}
+
               <div className='grid gap-3'>
                 <Label htmlFor='email'>Email</Label>
                 <Input
@@ -50,10 +91,12 @@ export function LoginForm({
                   type='email'
                   placeholder='m@example.com'
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)} // Update state
+                  onChange={(e) => setEmail(e.target.value)}
                   required
+                  className={errorMessage ? 'border-red-500' : ''}
                 />
               </div>
+
               <div className='grid gap-3'>
                 <div className='flex items-center'>
                   <Label htmlFor='password'>Password</Label>
@@ -68,13 +111,15 @@ export function LoginForm({
                   id='password'
                   type='password'
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)} // Update state
+                  onChange={(e) => setPassword(e.target.value)}
                   required
+                  className={errorMessage ? 'border-red-500' : ''}
                 />
               </div>
+
               <div className='flex flex-col gap-3'>
-                <Button type='submit' className='w-full'>
-                  Login
+                <Button type='submit' className='w-full' disabled={loading}>
+                  {loading ? 'Logging in...' : 'Login'}
                 </Button>
                 <Button variant='outline' className='w-full'>
                   Login with Google

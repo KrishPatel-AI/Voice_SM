@@ -13,6 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import ProfileNamePlate from '../avatar/avatar';
 
 export function Navbar() {
   return (
@@ -131,6 +132,8 @@ export function Navbar() {
               Voice Assistant
             </Button>
           </Link>
+
+          <ProfileNamePlate />
         </div>
       </div>
     </header>

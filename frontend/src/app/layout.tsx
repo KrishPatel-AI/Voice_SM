@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/layout/navbar";
+import { LayoutWrapper } from "@/components/layout/layout-wrapper"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,17 +22,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <div className="relative min-h-screen flex flex-col">
-            <div className="flex items-center justify-between px-4 sm:px-6 h-16 border-b sm:hidden">
-              <div className="flex items-center gap-2">
-                <span className="font-bold flex items-center">
-                  <span className="text-primary">Groq</span>It
-                </span>
-              </div>
-            </div>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-          </div>
+          <LayoutWrapper>{children}</LayoutWrapper>
           <Toaster />
         </ThemeProvider>
       </body>

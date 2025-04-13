@@ -18,7 +18,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
         </Badge>
       </div>
       <div className="rounded-lg bg-muted/30 p-4">
-        <p className="text-lg md:text-xl">{transcript}</p>
+        <p className="text-base md:text-lg">{transcript}</p>
       </div>
     </div>
   );

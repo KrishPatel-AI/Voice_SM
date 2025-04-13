@@ -208,7 +208,12 @@ export function SignupForm({
                 <Button
                   variant='outline'
                   className='w-full'
-                  onClick={() => signIn('google')}
+                  onClick={() =>
+                    signIn('google', {
+                      prompt: 'select_account',
+                      callbackUrl: '/dashboard',
+                    })
+                  }
                 >
                   Sign up with Google
                 </Button>

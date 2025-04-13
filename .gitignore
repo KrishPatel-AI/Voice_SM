@@ -9,6 +9,8 @@ frontend/out/
 backend/__pycache__/
 backend/env/
 backend_py/venv/
+
+
 *.pyc
 
 # --- General ---

@@ -1,206 +1,114 @@
-"use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Mic, StopCircle, Send, AlertCircle } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Mic, MicOff, StopCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface VoiceInputProps {
-  onTranscript: (text: string) => void;
+  onTranscript: (transcript: string) => void;
   disabled?: boolean;
 }
 
-export function VoiceInput({ onTranscript, disabled }: VoiceInputProps) {
+export function VoiceInput({ onTranscript, disabled = false }: VoiceInputProps) {
   const [isListening, setIsListening] = useState(false);
-  const [textInput, setTextInput] = useState("");
-  const [soundBars] = useState([1, 2, 3, 4, 5, 6]);
-  const [voiceSupported, setVoiceSupported] = useState(true);
-  const [voiceError, setVoiceError] = useState<string | null>(null);
-  
-  const recognitionRef = useRef<any>(null);
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
 
-  // Placeholder suggestions for US stock market queries
-  const placeholders = [
-    "What are the top performing tech stocks today?",
-    "How is the S&P 500 performing?",
-    "Give me the latest on AAPL stock",
-    "Which sector is performing best today?",
-    "What's the current price of Tesla stock?"
-  ];
-  
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholders[0]);
-
-  // Rotate placeholders
   useEffect(() => {
-    const interval = setInterval(() => {
-      const currentIndex = placeholders.indexOf(currentPlaceholder);
-      const nextIndex = (currentIndex + 1) % placeholders.length;
-      setCurrentPlaceholder(placeholders[nextIndex]);
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [currentPlaceholder, placeholders]);
-
-  // Initialize speech recognition
-  useEffect(() => {
-    // Check if browser supports SpeechRecognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-      setVoiceSupported(false);
-      setVoiceError("Speech recognition not supported in this browser");
-      return;
-    }
-
-    // Initialize speech recognition
-    recognitionRef.current = new SpeechRecognition();
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.interimResults = true;
-    recognitionRef.current.lang = 'en-US';
-
-    recognitionRef.current.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0])
-        .map((result: any) => result.transcript)
-        .join(' ');
+    if (typeof window !== 'undefined' && 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
       
-      setTextInput(transcript);
-    };
-
-    recognitionRef.current.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
-      setVoiceError(`Error: ${event.error}`);
-      setIsListening(false);
-    };
-
-    recognitionRef.current.onend = () => {
-      if (isListening) {
-        recognitionRef.current.start();
-      }
-    };
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, []);
-
-  // Make sure listening state is synced with recognition state
-  useEffect(() => {
-    // Update recognition state when isListening changes
-    if (recognitionRef.current) {
-      if (isListening) {
-        try {
-          recognitionRef.current.start();
-        } catch (error) {
-          // Already started, ignore
+      let finalTranscript = '';
+      
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
         }
-      } else {
-        try {
-          recognitionRef.current.stop();
-        } catch (error) {
-          // Already stopped, ignore
+        
+        // Only process when we have a final result with content
+        if (finalTranscript.trim()) {
+          recognition.stop();
+          onTranscript(finalTranscript);
+          finalTranscript = '';
         }
-      }
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+      
+      setRecognition(recognition);
     }
-  }, [isListening]);
+    
+    return () => {
+      if (recognition) {
+        recognition.abort();
+      }
+    };
+  }, [onTranscript]);
 
   const toggleListening = () => {
-    if (!recognitionRef.current) return;
-
+    if (!recognition) return;
+    
     if (isListening) {
-      recognitionRef.current.stop();
-      // Submit the transcript when stopping
-      if (textInput.trim()) {
-        onTranscript(textInput);
-      }
+      recognition.stop();
     } else {
-      setTextInput('');
-      setVoiceError(null);
       try {
-        recognitionRef.current.start();
+        recognition.start();
+        setIsListening(true);
       } catch (error) {
         console.error('Error starting speech recognition:', error);
-        setVoiceError('Could not start voice recognition');
       }
     }
-    
-    setIsListening(!isListening);
   };
 
-  const handleTextSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (textInput.trim()) {
-      onTranscript(textInput);
-      setTextInput("");
-    }
-  };
+  // Check if speech recognition is supported
+  const isSupported = typeof window !== 'undefined' && 
+    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
+  if (!isSupported) {
+    return (
+      <Button 
+        variant="outline" 
+        size="icon" 
+        className="h-[60px] w-[60px] rounded-full bg-muted/20" 
+        disabled={true}
+      >
+        <MicOff className="h-6 w-6 text-muted-foreground" />
+        <span className="sr-only">Voice input not supported</span>
+      </Button>
+    );
+  }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="p-4 md:p-6">
-        <div className="flex flex-col space-y-4">
-          {voiceError && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{voiceError}</AlertDescription>
-            </Alert>
-          )}
-
-          <form onSubmit={handleTextSubmit} className="flex gap-2">
-            <Input
-              placeholder={`Try: "${currentPlaceholder}"`}
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              className="flex-1"
-              disabled={disabled}
-            />
-            <Button
-              type="submit"
-              size="icon"
-              disabled={disabled || !textInput.trim()}
-            >
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send</span>
-            </Button>
-          </form>
-
-          <div className="flex justify-center">
-            <Button
-              variant={isListening ? "destructive" : "default"}
-              size="lg"
-              className="rounded-full w-16 h-16 shadow-md relative"
-              onClick={toggleListening}
-              disabled={disabled || !voiceSupported}
-            >
-              {isListening ? (
-                <>
-                  <StopCircle className="h-8 w-8" />
-                  <div className="absolute inset-0 rounded-full animate-pulse-ring opacity-75" />
-                  <div className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 flex items-end h-5">
-                    {soundBars.map((_, i) => (
-                      <div
-                        key={i}
-                        className="sound-bar mx-px bg-primary"
-                        style={{
-                          width: '3px',
-                          height: `${Math.random() * 12 + 3}px`,
-                          animationDelay: `${i * 0.1}s`,
-                          animation: 'soundbar-animation 0.5s infinite alternate'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <Mic className="h-8 w-8" />
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Card>
+    <Button
+      variant="outline"
+      size="icon"
+      className={cn(
+        "h-[50px] w-[50px] rounded-full transition-all duration-200",
+        isListening 
+          ? "bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600 dark:bg-red-900/30 dark:text-red-400" 
+          : "bg-primary/10 text-primary hover:bg-primary/20",
+        disabled && "opacity-50 cursor-not-allowed"
+      )}
+      onClick={toggleListening}
+      disabled={disabled}
+    >
+      {isListening ? (
+        <StopCircle className="h-6 w-6 animate-pulse" />
+      ) : (
+        <Mic className="h-6 w-6" />
+      )}
+      <span className="sr-only">
+        {isListening ? "Stop listening" : "Start voice input"}
+      </span>
+    </Button>
   );
 }

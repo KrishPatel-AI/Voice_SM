@@ -158,8 +158,8 @@ export function SignupForm({
             </div>
           )}
           <form onSubmit={handleSignup}>
-            <div className='flex flex-col gap-6'>
-              <div className='grid gap-3'>
+            <div className='flex flex-col gap-4'>
+              <div className='grid gap-2'>
                 <Label htmlFor='name'>Full Name</Label>
                 <Input
                   id='name'
@@ -170,7 +170,7 @@ export function SignupForm({
                 />
               </div>
 
-              <div className='grid gap-3'>
+              <div className='grid gap-2'>
                 <Label htmlFor='email'>Email</Label>
                 <Input
                   id='email'
@@ -181,7 +181,7 @@ export function SignupForm({
                 />
               </div>
 
-              <div className='grid gap-3'>
+              <div className='grid gap-2'>
                 <Label htmlFor='password'>Password</Label>
                 <PasswordInput
                   id='password'
@@ -191,7 +191,7 @@ export function SignupForm({
                 />
               </div>
 
-              <div className='grid gap-3'>
+              <div className='grid gap-2'>
                 <Label htmlFor='confirmPassword'>Confirm Password</Label>
                 <PasswordInput
                   id='confirmPassword'
@@ -201,7 +201,7 @@ export function SignupForm({
                 />
               </div>
 
-              <div className='flex flex-col gap-3'>
+              <div className='flex flex-col gap-2'>
                 <Button type='submit' className='w-full' disabled={loading}>
                   {loading ? 'Creating...' : 'Create Account'}
                 </Button>

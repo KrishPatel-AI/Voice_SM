@@ -12,7 +12,7 @@ export function HeroSection() {
         <div className="space-y-6">
           <div className="space-y-4">
             <Badge variant="outline" >
-              Introducing <span className="text-primary">Groq</span>it
+              Introducing <span className="text-primary gap-0">Voice</span>SM
             </Badge>
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
               Your Voice-Powered Stock Market Assistant

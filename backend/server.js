@@ -2,13 +2,13 @@ require('dotenv').config();
 
 const express = require('express');
 const passport = require('passport');
-const session = require('cookie-session');
+const session = require('express-session');
 const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 const connectDB = require('./config/db');
 
-require('./config/googleAuth');
+require('./config/passport');
 
 const app = express();
 

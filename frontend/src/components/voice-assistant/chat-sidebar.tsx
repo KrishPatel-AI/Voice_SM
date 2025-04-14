@@ -17,13 +17,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { ChatUser } from "./chat-user";
 
-const data = {
-  user: {
-    name: "VoiceSM AI User",
-    email: "user.ai@voicesm.in",
-    avatar: "/avatars/shadcn.jpg",
-  },
-};
+// const data = {
+//   user: {
+//     name: "VoiceSM AI User",
+//     email: "user.ai@voicesm.in",
+//     avatar: "/avatars/shadcn.jpg",
+//   },
+// };
 
 export function ChatSidebar() {
   const chatHistory = [
@@ -89,7 +89,7 @@ export function ChatSidebar() {
             </Button>
           </Link>
         </div>
-        <ChatUser user={data.user} />
+        <ChatUser  />
       </SidebarFooter>
     </Sidebar>
   );

@@ -1,56 +1,40 @@
+// components/authentication/avatar.tsx
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { useUser, UserButton } from "@clerk/nextjs";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuLabel,
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
-interface User {
-  name: string;
-  email: string;
-  avatar?: string;
-}
+export default function ProfileNamePlate() {
+  const { user, isLoaded } = useUser();
+  
+  if (!isLoaded || !user) { 
+    return (
+      <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+        <Avatar className="h-8 w-8">
+          <AvatarFallback>U</AvatarFallback>
+        </Avatar>
+      </Button>
+    );
+  }
 
-interface Props {
-  user: User;
-}
-
-export default function ProfileNamePlate({ user }: Props) {
-  if (!user) return null;
-
-  const username = user.name || 'User';
-  const userImage = user.avatar || undefined;
-
+  const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`;
+  
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant='outline'
-          className='flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium'
-        >
-          <Avatar className='h-6 w-6'>
-            <AvatarImage src={userImage} alt={username} />
-            <AvatarFallback>
-              {username.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          {username}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-48' align='end'>
-        <DropdownMenuItem
-          onClick={() => {
-            localStorage.clear();
-            window.location.href = '/login';
-          }}
-        >
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex items-center gap-2">
+      <UserButton afterSignOutUrl="/" />
+      <span className="text-sm font-medium hidden md:block">
+        {user.firstName} {user.lastName}
+      </span>
+    </div>
   );
 }

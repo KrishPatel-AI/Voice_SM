@@ -49,6 +49,8 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log('Received login request:', req.body);
+
     if (!email || !password) {
       return res
         .status(400)

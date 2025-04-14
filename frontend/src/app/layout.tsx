@@ -1,14 +1,11 @@
-
 'use client';
 
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import { LayoutWrapper } from "@/components/layout/layout-wrapper"; 
-
-
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { LayoutWrapper } from '@/components/layout/layout-wrapper';
 
 import { SessionProvider } from 'next-auth/react';
 
@@ -22,14 +19,12 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
-
         <SessionProvider>
-     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <LayoutWrapper>{children}</LayoutWrapper>
-          <Toaster />
-        </ThemeProvider>
+          <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
+            <LayoutWrapper>{children}</LayoutWrapper>
+            <Toaster />
+          </ThemeProvider>
         </SessionProvider>
-
       </body>
     </html>
   );

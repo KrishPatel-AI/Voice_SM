@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { log } from 'console';
 
 export function LoginForm({
   className,
@@ -38,18 +39,32 @@ export function LoginForm({
     setErrorMessage('');
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false, // Let us handle navigation manually.
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (result?.error) {
-        setErrorMessage(result.error || 'Invalid credentials');
-        toast.error(result.error || 'Login failed. Please try again.');
-      } else {
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            name: data?.user?.username,
+            email: data?.user?.email,
+            id: data?.user?.id,
+          })
+        );
+
         toast.success('Welcome back!');
-        router.push('/'); // Redirect to home page
+        router.push('/');
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData?.message || 'Login failed.');
+        toast.error(errorData?.message || 'Login failed.');
       }
     } catch (error: any) {
       setErrorMessage('Something went wrong.');
@@ -121,7 +136,7 @@ export function LoginForm({
                 <Button type='submit' className='w-full' disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
-                <Button variant='outline' className='w-full'>
+                <Button variant='outline' className='w-full' disabled={true}>
                   Login with Google
                 </Button>
               </div>

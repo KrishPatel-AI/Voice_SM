@@ -6,18 +6,24 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useSession } from 'next-auth/react';
 
-export default function ProfileNamePlate() {
-  const { data: session, status } = useSession();
+interface User {
+  name: string;
+  email: string;
+  avatar?: string;
+}
 
-  if (status === 'loading') return null; // or return a skeleton loader
-  if (!session?.user) return null;
+interface Props {
+  user: User;
+}
 
-  const username = session.user.name || 'User';
+export default function ProfileNamePlate({ user }: Props) {
+  if (!user) return null;
+
+  const username = user.name || 'User';
+  const userImage = user.avatar || undefined;
 
   return (
     <DropdownMenu>
@@ -27,7 +33,7 @@ export default function ProfileNamePlate() {
           className='flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium'
         >
           <Avatar className='h-6 w-6'>
-            <AvatarImage src={undefined} alt={username} />
+            <AvatarImage src={userImage} alt={username} />
             <AvatarFallback>
               {username.slice(0, 2).toUpperCase()}
             </AvatarFallback>
@@ -36,13 +42,14 @@ export default function ProfileNamePlate() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-48' align='end'>
-        {/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuSeparator /> */}
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            localStorage.clear();
+            window.location.href = '/login';
+          }}
+        >
+          Log out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

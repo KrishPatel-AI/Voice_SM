@@ -1,9 +1,12 @@
-import Link from 'next/link';
-import { BarChart2, Eye, LineChart, Mic } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+'use client';
 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { BarChart2, Eye, LineChart } from 'lucide-react';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,7 +18,64 @@ import {
 } from '@/components/ui/navigation-menu';
 import ProfileNamePlate from '../authenication/avatar';
 
+interface User {
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
 export function Navbar() {
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const loadUser = () => {
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('auth_token');
+        const userData = localStorage.getItem('user');
+        if (token && userData) {
+          try {
+            setUser(JSON.parse(userData)); // Ensure the user object is properly loaded
+          } catch (error) {
+            console.error('Failed to parse user data:', error);
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      }
+    };
+
+    loadUser();
+    setHasMounted(true);
+
+    // Listen for changes to localStorage
+    window.addEventListener('storage', loadUser);
+    return () => window.removeEventListener('storage', loadUser);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/logout', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (res.ok) {
+        localStorage.clear();
+        setUser(null);
+        router.push('/login');
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  if (!hasMounted) return null;
+
   return (
     <header className='sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur px-12'>
       <div className='container flex h-16 items-center justify-between'>
@@ -56,7 +116,6 @@ export function Navbar() {
                           </Link>
                         </NavigationMenuLink>
                       </li>
-
                       <li>
                         <NavigationMenuLink asChild>
                           <Link
@@ -75,7 +134,6 @@ export function Navbar() {
                           </Link>
                         </NavigationMenuLink>
                       </li>
-
                       <li>
                         <NavigationMenuLink asChild>
                           <Link
@@ -88,7 +146,6 @@ export function Navbar() {
                                 Compare
                               </span>
                             </div>
-
                             <div className='text-xs text-muted-foreground -mt-1 ml-6'>
                               Compare multiple stocks
                             </div>
@@ -118,22 +175,23 @@ export function Navbar() {
             </NavigationMenu>
           </nav>
         </div>
-        <div className='flex items-center gap-2'>
-          {/* <Link href='/voice-assistant'>
-            <Button size='sm' className='hidden sm:flex'>
-            <Mic className='h-4 w-4 mr-2' />
-            Voice Assistant
-            </Button>
-            </Link> */}
-          <Link href='/login'>
-            <Button variant='outline'>Log In</Button>
-          </Link>
-          <Link href='/signup'>
-            <Button>Sign Up </Button>
-          </Link>
-          <ThemeToggle />
 
-          <ProfileNamePlate />
+        <div className='flex items-center gap-2'>
+          {user ? (
+            <>
+              <ProfileNamePlate user={user} />
+            </>
+          ) : (
+            <>
+              <Link href='/login'>
+                <Button variant='outline'>Log In</Button>
+              </Link>
+              <Link href='/signup'>
+                <Button>Sign Up</Button>
+              </Link>
+            </>
+          )}
+          <ThemeToggle />
         </div>
       </div>
     </header>

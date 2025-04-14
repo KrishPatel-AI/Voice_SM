@@ -24,4 +24,16 @@ router.get(
   }
 );
 
+router.get('/logout', (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+      return res.status(500).json({ message: 'Error during logout' });
+    }
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid'); // optional: clear the session cookie
+      res.status(200).json({ message: 'Logged out successfully' });
+    });
+  });
+});
+
 module.exports = router;

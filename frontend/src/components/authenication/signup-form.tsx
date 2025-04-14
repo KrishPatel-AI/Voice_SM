@@ -53,15 +53,47 @@ export function SignupForm({
   ...props
 }: React.ComponentProps<'div'>) {
   const [loading, setLoading] = React.useState(false);
+  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
   const [message, setMessage] = React.useState('');
   const [messageType, setMessageType] = React.useState<
     'success' | 'error' | ''
   >('');
   const router = useRouter();
 
+  const validate = (
+    username: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!/^[a-zA-Z ]{2,30}$/.test(username)) {
+      newErrors.name = 'Name must contain only letters and spaces.';
+    }
+
+    if (!email.endsWith('@gmail.com')) {
+      newErrors.email = 'Email must end with @gmail.com.';
+    }
+
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}[\]~]).{6,}$/;
+    if (!passwordRegex.test(password)) {
+      newErrors.password =
+        'Password must contain at least 1 uppercase, 1 number, and 1 special character.';
+    }
+
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match.';
+    }
+
+    return newErrors;
+  };
+
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
     setMessage('');
     setMessageType('');
 
@@ -71,48 +103,39 @@ export function SignupForm({
     const password = formData.get('password')?.toString() || '';
     const confirmPassword = formData.get('confirmPassword')?.toString() || '';
 
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match.');
-      setMessage('Passwords do not match.');
-      setMessageType('error');
+    const validationErrors = validate(
+      username,
+      email,
+      password,
+      confirmPassword
+    );
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       setLoading(false);
       return;
     }
 
     try {
-      // Attempt to register the user directly
       const response = await axios.post(
         'http://localhost:5000/api/auth/signup',
-        {
-          username,
-          email,
-          password,
-        }
+        { username, email, password }
       );
 
       if (response.status === 201) {
         const { user, token } = response.data;
-        console.log('✅ Signup Success:', user);
-        console.log('📌 JWT Token:', token);
 
         localStorage.setItem('auth_username', user.username);
         localStorage.setItem('auth_token', token);
 
         setMessage('User registered successfully! Redirecting to login...');
         setMessageType('success');
-        toast.success(
-          `Welcome, ${user.username}! User registered successfully.`
-        );
+        toast.success(`Welcome, ${user.username}!`);
 
-        // Redirect to login page after 2 seconds
         setTimeout(() => {
           router.push('/login');
         }, 2000);
       }
     } catch (err: any) {
-      console.error('Signup Error:', err.response?.data || err.message);
-
-      // Check if the error is due to user already existing
       if (
         err.response?.data?.message?.toLowerCase().includes('exist') ||
         err.response?.status === 409
@@ -120,13 +143,10 @@ export function SignupForm({
         setMessage('User already exists. Please login.');
         setMessageType('error');
         toast.error('User already exists. Please login.');
-
-        // Redirect to login page after 2 seconds
         setTimeout(() => {
           router.push('/login');
         }, 2000);
       } else {
-        // Other registration errors
         setMessage(err.response?.data?.message || 'Signup failed.');
         setMessageType('error');
         toast.error(err.response?.data?.message || 'Signup failed.');
@@ -157,7 +177,7 @@ export function SignupForm({
               {message}
             </div>
           )}
-          <form onSubmit={handleSignup}>
+          <form onSubmit={handleSignup} noValidate>
             <div className='flex flex-col gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='name'>Full Name</Label>
@@ -168,6 +188,9 @@ export function SignupForm({
                   placeholder='John Doe'
                   required
                 />
+                {errors.name && (
+                  <p className='text-red-500 text-sm'>{errors.name}</p>
+                )}
               </div>
 
               <div className='grid gap-2'>
@@ -176,9 +199,12 @@ export function SignupForm({
                   id='email'
                   name='email'
                   type='email'
-                  placeholder='you@example.com'
+                  placeholder='you@gmail.com'
                   required
                 />
+                {errors.email && (
+                  <p className='text-red-500 text-sm'>{errors.email}</p>
+                )}
               </div>
 
               <div className='grid gap-2'>
@@ -189,6 +215,9 @@ export function SignupForm({
                   placeholder='********'
                   required
                 />
+                {errors.password && (
+                  <p className='text-red-500 text-sm'>{errors.password}</p>
+                )}
               </div>
 
               <div className='grid gap-2'>
@@ -199,6 +228,11 @@ export function SignupForm({
                   placeholder='********'
                   required
                 />
+                {errors.confirmPassword && (
+                  <p className='text-red-500 text-sm'>
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
 
               <div className='flex flex-col gap-2'>
@@ -208,6 +242,8 @@ export function SignupForm({
                 <Button
                   variant='outline'
                   className='w-full'
+                  type='button'
+                  disabled={true}
                   onClick={() =>
                     signIn('google', {
                       prompt: 'select_account',

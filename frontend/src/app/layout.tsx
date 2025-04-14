@@ -1,15 +1,11 @@
-'use client';
-
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/sonner';
-import { LayoutWrapper } from '@/components/layout/layout-wrapper';
-
-import { SessionProvider } from 'next-auth/react';
-
-const inter = Inter({ subsets: ['latin'] });
+import { type Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { LayoutWrapper } from "@/components/layout/layout-wrapper";
+const inter = Inter({ subsets: ["latin"] });
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -17,15 +13,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className={inter.className}>
-        <SessionProvider>
-          <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             <LayoutWrapper>{children}</LayoutWrapper>
             <Toaster />
           </ThemeProvider>
-        </SessionProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

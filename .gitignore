@@ -1,8 +1,7 @@
 # --- Node / Next.js (frontend) ---
 frontend/node_modules/
 frontend/.next/
-frontend/.env.local
-frontend/.env
+
 frontend/out/
 
 # --- Python / Backend ---
@@ -17,7 +16,7 @@ backend_py/venv/
 *.log
 .DS_Store
 Thumbs.db
-.env
+
 
 
 # Ignore dependencies and build

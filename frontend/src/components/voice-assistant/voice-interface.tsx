@@ -1,38 +1,86 @@
-"use client";
-import { useState, useEffect, useRef } from "react";
-import { VoiceInput } from "./voice-input";
-import { Badge } from "@/components/ui/badge";
-import { Bot, Mic, AlertCircle, SendIcon } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme-toggle";
-
-type Message = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-};
+'use client';
+import { useState, useEffect, useRef } from 'react';
+import { VoiceInput } from './voice-input';
+import { Badge } from '@/components/ui/badge';
+import {
+  Bot,
+  Mic,
+  AlertCircle,
+  SendIcon,
+  Plus,
+  MessageSquare,
+  Trash2,
+} from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { useChat } from '../../hooks/useChat';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerClose,
+} from '@/components/ui/drawer';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Message, Conversation } from '../../lib/database.types';
 
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
 export function VoiceInterface() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const {
+    messages,
+    setMessages,
+    currentConversation,
+    conversations,
+    isLoading,
+    sendMessage,
+    startNewConversation,
+    selectConversation,
+    deleteConversation,
+  } = useChat();
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState('');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Set isClient to true on mount
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
+  }, [messages, currentConversation]);
+
+  // Health check to confirm backend connectivity
+  useEffect(() => {
+    const checkBackendHealth = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/health`);
+        if (!response.ok) {
+          setError('Backend service is currently unavailable');
+        }
+      } catch (err) {
+        console.error('Backend health check failed:', err);
+        setError('Cannot connect to backend service');
+      }
+    };
+
+    checkBackendHealth();
+  }, []);
 
   const handleTranscript = async (text: string) => {
     await processMessage(text);
@@ -41,159 +89,268 @@ export function VoiceInterface() {
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
     await processMessage(inputText);
-    setInputText("");
+    setInputText('');
   };
 
   const processMessage = async (text: string) => {
     if (!text.trim()) return;
-
-    // Add user message to chat
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: text,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
     setIsProcessing(true);
     setError(null);
 
     try {
+      if (!currentConversation) {
+        await startNewConversation(
+          `Conversation ${new Date().toLocaleString()}`
+        );
+      }
+
+      const tempUserMessage = {
+        id: `temp-${Date.now()}`,
+        role: 'user',
+        content: text,
+        timestamp: new Date(),
+        conversation_id: currentConversation?.id || '',
+        created_at: new Date().toISOString(),
+      } as Message;
+
+      console.log('Messages before state update:', messages);
+      setMessages((prevMessages) => {
+        const exists = prevMessages.some(
+          (msg) => msg.id === tempUserMessage.id
+        );
+        if (exists) return prevMessages;
+        return [...prevMessages, tempUserMessage];
+      });
+      console.log('Messages after state update:', messages);
+
       const response = await fetch(`${BACKEND_URL}/api/speech/text`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get response from assistant");
+        throw new Error('Failed to get response from assistant');
       }
 
       const data = await response.json();
+      console.log('Response from backend:', data);
 
-      // Add assistant response to chat
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: data.response,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      await sendMessage(text, data.response);
     } catch (err) {
-      console.error("Error processing transcript:", err);
-      setError("Failed to communicate with the assistant. Please try again.");
+      console.error('Error processing transcript:', err);
+      setError('Failed to communicate with the assistant. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
+  const handleNewConversation = async () => {
+    await startNewConversation(`Conversation ${new Date().toLocaleString()}`);
+    setIsDrawerOpen(false);
+  };
+
+  const handleSelectConversation = async (conversationId) => {
+    try {
+      await selectConversation(conversationId);
+      setIsDrawerOpen(false);
+
+      // Delay scrolling to ensure DOM updates
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      });
+    } catch (error) {
+      console.error('Error selecting conversation:', error);
+      // Show an error message to the user
+      setError('Failed to load conversation. Please try again.');
+    }
+  };
+  const handleDeleteConversation = async (
+    conversationId: string,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation();
+    await deleteConversation(conversationId);
+  };
+
   // Handle Enter key to send message
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
-  // Health check to confirm backend connectivity
-  useEffect(() => {
-    const checkBackendHealth = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/health`);
-        if (!response.ok) {
-          setError("Backend service is currently unavailable");
-        }
-      } catch (err) {
-        console.error("Backend health check failed:", err);
-        setError("Cannot connect to backend service");
-      }
-    };
-
-    checkBackendHealth();
-  }, []);
+  // If not client-side yet, render a loading state
+  if (!isClient) {
+    return (
+      <div className='h-screen flex items-center justify-center'>
+        Loading...
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-2rem)]  mx-auto   overflow-hidden">
+    <div className='flex flex-col h-[calc(100vh-2rem)] mx-auto overflow-hidden'>
       {/* Fixed Header */}
-      <div className=" py-3 px-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" />
-            <span className="font-medium">
+      <div className='py-3 px-6'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <Bot className='h-5 w-5 text-primary' />
+            <span className='font-medium'>
               Stock Market Assistant By VoiceSM
             </span>
           </div>
-          <ThemeToggle />
+          <div className='flex items-center gap-2'>
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+              <DrawerTrigger asChild>
+                <Button variant='outline' size='icon'>
+                  <MessageSquare className='h-5 w-5' />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader className='flex justify-between items-center'>
+                  <DrawerTitle>Conversations</DrawerTitle>
+                  <Button
+                    onClick={handleNewConversation}
+                    variant='outline'
+                    size='sm'
+                  >
+                    <Plus className='h-4 w-4 mr-2' /> New Chat
+                  </Button>
+                </DrawerHeader>
+                <ScrollArea className='h-[60vh] px-4'>
+                  {isLoading ? (
+                    <div className='flex justify-center p-4'>
+                      Loading conversations...
+                    </div>
+                  ) : conversations.length === 0 ? (
+                    <div className='flex flex-col items-center justify-center p-8 text-center'>
+                      <p className='text-muted-foreground'>
+                        No conversations yet
+                      </p>
+                    </div>
+                  ) : (
+                    <div className='space-y-2'>
+                      {conversations.map((conversation) => (
+                        <div
+                          key={conversation.id}
+                          onClick={() =>
+                            handleSelectConversation(conversation.id)
+                          }
+                          className={cn(
+                            'flex items-center justify-between p-3 rounded-md cursor-pointer hover:bg-muted/50 transition-colors',
+                            currentConversation?.id === conversation.id &&
+                              'bg-muted'
+                          )}
+                        >
+                          <div className='truncate flex-1'>
+                            <p className='font-medium truncate'>
+                              {conversation.title}
+                            </p>
+                            <p className='text-xs text-muted-foreground truncate'>
+                              {new Date(
+                                conversation.created_at
+                              ).toLocaleString()}
+                            </p>
+                          </div>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={(e) =>
+                              handleDeleteConversation(conversation.id, e)
+                            }
+                          >
+                            <Trash2 className='h-4 w-4 text-muted-foreground' />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </DrawerContent>
+            </Drawer>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 
       {/* Main Content - Scrollable Chat Area */}
-      <div className="flex flex-col flex-1 overflow-hidden ">
+      <div className='flex flex-col flex-1 overflow-hidden'>
         {error && (
-          <div className="px-4 pt-4">
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+          <div className='px-4 pt-4'>
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           </div>
         )}
 
         {/* Scrollable Chat Content */}
-        <div className="flex-1 overflow-y-auto p-4" ref={scrollAreaRef}>
+        <div className='flex-1 overflow-y-auto p-4' ref={scrollAreaRef}>
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <Bot className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-medium mb-2">
+            <div className='flex flex-col items-center justify-center h-full text-center'>
+              <Bot className='h-12 w-12 text-muted-foreground mb-4' />
+              <h3 className='text-xl font-medium mb-2'>
                 Welcome to Stock Market Assistant
               </h3>
-              <p className="text-muted-foreground max-w-md">
+              <p className='text-muted-foreground max-w-md'>
                 Ask me anything about stocks, market trends, or financial data.
                 Try: "How is Apple stock performing today?" or "What's the
                 current price of Tesla?"
               </p>
+              {!currentConversation && (
+                <Button
+                  className='mt-4'
+                  variant='outline'
+                  onClick={handleNewConversation}
+                >
+                  <Plus className='h-4 w-4 mr-2' /> Start New Conversation
+                </Button>
+              )}
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {messages.map((message) => (
-                <div key={message.id} className="w-full max-w-3xl mx-auto">
-                  {message.role === "user" ? (
-                    <div className="flex flex-col space-y-3">
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <Mic className="h-4 w-4" />
+                <div key={message.id} className='w-full max-w-3xl mx-auto'>
+                  {message.role === 'user' ? (
+                    <div className='flex flex-col space-y-3'>
+                      <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+                        <Mic className='h-4 w-4' />
                         <span>Your query</span>
-                        <Badge variant="outline" className="ml-auto">
+                        <Badge variant='outline' className='ml-auto'>
                           Transcript
                         </Badge>
                       </div>
-                      <div className="rounded-lg bg-muted/30 p-4">
-                        <p className="text-lg">{message.content}</p>
+                      <div className='rounded-lg bg-muted/30 p-4'>
+                        <p className='text-lg'>{message.content}</p>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col space-y-3">
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <Bot className="h-4 w-4" />
+                    <div className='flex flex-col space-y-3'>
+                      <div className='flex items-center space-x-2 text-sm text-muted-foreground'>
+                        <Bot className='h-4 w-4' />
                         <span>Assistant response</span>
                         <Badge
-                          variant="outline"
+                          variant='outline'
                           className={cn(
-                            "ml-auto",
+                            'ml-auto',
                             message.content.match(/\+\d+\.\d+%|\-\d+\.\d+%/g)
-                              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-                              : "bg-primary/10 text-primary"
+                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+                              : 'bg-primary/10 text-primary'
                           )}
                         >
                           {message.content.match(/\+\d+\.\d+%|\-\d+\.\d+%/g)
-                            ? "Market Data"
-                            : "Response"}
+                            ? 'Market Data'
+                            : 'Response'}
                         </Badge>
                       </div>
-                      <div className="rounded-lg bg-card p-4 shadow-sm border">
-                        <p className="whitespace-pre-line">{message.content}</p>
+                      <div className='rounded-lg bg-card p-4 shadow-sm border'>
+                        <p className='whitespace-pre-line'>{message.content}</p>
                       </div>
                     </div>
                   )}
@@ -201,49 +358,54 @@ export function VoiceInterface() {
               ))}
 
               {isProcessing && (
-                <div className="flex items-center space-x-2 p-4 bg-muted/20 rounded-lg w-full max-w-3xl mx-auto">
-                  <span className="text-sm text-muted-foreground animate-text-pulse">
+                <div className='flex items-center space-x-2 p-4 bg-muted/20 rounded-lg w-full max-w-3xl mx-auto'>
+                  <span className='text-sm text-muted-foreground animate-text-pulse'>
                     Processing...
                   </span>
                 </div>
               )}
 
-              <div ref={messagesEndRef} />
+              <div id='messages-end' ref={messagesEndRef} />
             </div>
           )}
         </div>
 
         {/* Fixed Input Area at Bottom */}
-        <div className=" px-30 bg-background py-4">
-          <div className="flex items-end gap-4">
-            <div className="flex-1 relative align-center gap-2">
+        <div className='px-30 bg-background py-4'>
+          <div className='flex items-end gap-4'>
+            <div className='flex-1 relative align-center gap-2'>
               <Textarea
-                placeholder="Type your message here..."
-                className="min-h-[50px] resize-none "
+                placeholder={
+                  currentConversation
+                    ? 'Type your message here...'
+                    : 'Start a new conversation to chat'
+                }
+                className='min-h-[50px] resize-none'
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleKeyDown}
-                disabled={isProcessing}
+                disabled={isProcessing || !currentConversation}
               />
               <div>
-
-                <Separator orientation="vertical" />
+                <Separator orientation='vertical' />
               </div>
               <Button
-                size="icon"
-                variant="ghost"
-                className="absolute right-2 bottom-2"
+                size='icon'
+                variant='ghost'
+                className='absolute right-2 bottom-2'
                 onClick={handleSendMessage}
-                disabled={!inputText.trim() || isProcessing}
+                disabled={
+                  !inputText.trim() || isProcessing || !currentConversation
+                }
               >
-                <SendIcon className="h-5 w-5" />
-                <span className="sr-only">Send message</span>
+                <SendIcon className='h-5 w-5' />
+                <span className='sr-only'>Send message</span>
               </Button>
             </div>
-            <div className="flex-shrink-0">
+            <div className='flex-shrink-0'>
               <VoiceInput
                 onTranscript={handleTranscript}
-                disabled={isProcessing}
+                disabled={isProcessing || !currentConversation}
               />
             </div>
           </div>

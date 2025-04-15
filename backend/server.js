@@ -8,7 +8,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const connectDB = require('./config/db');
 
-require('./config/passport');
+// require('./config/passport');
 
 const app = express();
 

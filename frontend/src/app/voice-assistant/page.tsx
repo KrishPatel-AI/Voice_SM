@@ -1,22 +1,22 @@
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
-import { VoiceInterface } from "@/components/voice-assistant/voice-interface";
+import { VoiceInterface } from '@/components/voice-assistant/voice-interface';
+// import Chat from '@/components/demo_voice';
+import { ChatLayout } from '@/components/layout/chat-layout';
 
-import { ChatLayout } from "@/components/layout/chat-layout";
-
-import { Brain } from "lucide-react";
+import { Brain } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Voice Assistant - GroqIt",
-  description: "AI-powered voice assistant for financial market insights",
+  title: 'Voice Assistant - GroqIt',
+  description: 'AI-powered voice assistant for financial market insights',
 };
 
 export default function VoiceAssistant() {
   return (
-    <div className="min-h-screen bg-background">
-    <ChatLayout>
-      <VoiceInterface />
-    </ChatLayout>
-  </div>
+    <div className='min-h-screen bg-background'>
+      <ChatLayout>
+        <VoiceInterface />
+      </ChatLayout>
+    </div>
   );
 }

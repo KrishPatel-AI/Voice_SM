@@ -1,5 +1,5 @@
-
-import { StockComparison } from "@/components/compare/stock-comparison";
+"use client";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,11 +10,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, BarChart, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { StockSearchBar } from "@/components/compare/stock-search";
 import { ComparisonMetrics } from "@/components/compare/comparison-metrics";
 import { ComparisonHistory } from "@/components/compare/comparison-history";
+import { ComparisonChart } from "@/components/compare/compare-chart";
 
-const Compare = () => {
+export default function Compare() {
+  const [selected, setSelected] = useState<string[]>([]);
   return (
     <div className="container px-12 py-8">
       <div className="mb-6">
@@ -29,30 +31,12 @@ const Compare = () => {
 
       <div className="grid grid-cols-1 gap-6 mb-8">
         <Card>
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <CardTitle className="text-xl">Stock Selection</CardTitle>
-                <CardDescription>
-                  Select stocks to compare performance metrics
-                </CardDescription>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Preset: Tech Giants
-                </Button>
-                <Button variant="outline" size="sm">
-                  Preset: Banking
-                </Button>
-                <Button variant="outline" size="sm">
-                  Preset: EV Makers
-                </Button>
-              </div>
-            </div>
+          <CardHeader>
+            <CardTitle className="text-xl mb-2">
+              Search and Select Stocks
+            </CardTitle>
+            <StockSearchBar selected={selected} setSelected={setSelected} />
           </CardHeader>
-          <CardContent>
-            <StockComparison />
-          </CardContent>
         </Card>
       </div>
 
@@ -76,14 +60,14 @@ const Compare = () => {
               </TabsList>
               <TabsContent value="chart">
                 <div className="h-[500px]">
-                  <ComparisonChart />
+                  <ComparisonChart symbols={selected} />
                 </div>
               </TabsContent>
               <TabsContent value="metrics">
-                <ComparisonMetrics />
+                <ComparisonMetrics symbols={selected} />
               </TabsContent>
               <TabsContent value="history">
-                <ComparisonHistory />
+                <ComparisonHistory symbols={selected} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -91,22 +75,4 @@ const Compare = () => {
       </div>
     </div>
   );
-};
-
-function ComparisonChart() {
-  return (
-    <div className="w-full h-full flex items-center justify-center bg-muted/30 rounded-lg border border-dashed">
-      <div className="text-center">
-        <BarChart className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-        <p className="text-muted-foreground">
-          Interactive stock price comparison chart will be displayed here
-        </p>
-        <p className="text-sm text-muted-foreground">
-          (Implementation requires actual chart component)
-        </p>
-      </div>
-    </div>
-  );
 }
-
-export default Compare;

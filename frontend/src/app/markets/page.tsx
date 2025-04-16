@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { MarketSummary } from "@/components/market/market-summary";
+import { IndianMarketSummary } from "@/components/market/market-summary";
 import { NewsFeed } from "@/components/market/news-feed";
 
 import {
@@ -49,8 +49,8 @@ export default function Markets() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1">
-                <h3 className="text-sm font-medium mb-3">US Market Indices</h3>
-                <MarketSummary />
+                {/* <h3 className="text-sm font-medium mb-3">Indian Market Indices</h3> */}
+                <IndianMarketSummary />
               </div>
 
               <div className="lg:col-span-2">

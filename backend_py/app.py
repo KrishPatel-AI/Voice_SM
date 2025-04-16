@@ -12,11 +12,13 @@ sock = Sock(app)
 from tools.financial_assistant import init_financial_assistant
 from tools.market_indices import init_market_indices
 from tools.market_sector import init_market_sector
+from tools.compare import init_compare
 
 # Initialize tools
 init_financial_assistant(app)
 init_market_indices(app, sock)
 init_market_sector(app)
+init_compare(app)
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -24,7 +26,7 @@ def health_check():
     return jsonify({
         "status": "ok", 
         "service": "unified-tools-server",
-        "tools": ["financial_assistant", "market_indices", "market_sector"]
+        "tools": ["financial_assistant", "market_indices", "market_sector","compare"]
     })
 
 if __name__ == '__main__':

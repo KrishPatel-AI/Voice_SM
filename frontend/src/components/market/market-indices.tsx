@@ -17,7 +17,7 @@ interface RegionData {
   [region: string]: IndexData[];
 }
 
-export function GlobalIndices() {
+export function MarketIndices() {
   const [marketData, setMarketData] = useState<RegionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

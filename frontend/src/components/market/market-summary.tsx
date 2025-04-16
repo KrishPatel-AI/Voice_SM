@@ -12,7 +12,7 @@ interface MarketIndex {
   change: number | string;
 }
 
-export function IndianMarketSummary() {
+export function MarketSummary() {
   const [marketData, setMarketData] = useState<MarketIndex[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -1,58 +1,75 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 interface SectorData {
-  name: string;
+  sector: string;
   change: number;
-  value: number;
+  weight: number; // assume this is already percentage (e.g. 10.58)
 }
 
 export function MarketSectors() {
-  // Sample market sector data
-  const sectors: SectorData[] = [
-    { name: "Technology", change: 1.8, value: 65 },
-    { name: "Healthcare", change: 0.7, value: 58 },
-    { name: "Financials", change: -0.4, value: 42 },
-    { name: "Consumer Disc.", change: 1.2, value: 61 },
-    { name: "Communication", change: -0.2, value: 45 },
-    { name: "Industrials", change: 0.5, value: 53 },
-    { name: "Energy", change: -1.3, value: 35 },
-    { name: "Materials", change: 0.3, value: 51 },
-  ];
+  const [sectors, setSectors] = useState<SectorData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/sectors");
+        const data = await res.json();
+        setSectors(data);
+      } catch (err) {
+        console.error("Failed to fetch sector data:", err);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-h-[700px] overflow-y-auto">
       {sectors.map((sector) => (
-        <Card key={sector.name} className="bg-card/50 shadow-none">
-          <CardContent className="p-3">
-            <div className="flex justify-between items-center mb-2">
-              <div className="font-medium">{sector.name}</div>
-              <div className="flex items-center">
-                {sector.change > 0 ? (
-                  <>
-                    <ArrowUpRight className="h-4 w-4 text-stock-up" />
-                    <span className="text-sm text-stock-up">
-                      {sector.change.toFixed(1)}%
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <ArrowDownRight className="h-4 w-4 text-stock-down" />
-                    <span className="text-sm text-stock-down">
-                      {Math.abs(sector.change).toFixed(1)}%
-                    </span>
-                  </>
-                )}
+        <Card key={sector.sector} className="bg-card/50 shadow-none">
+          <CardContent className="p-3 ">
+         
+
+              <div className="flex justify-between items-center mb-1">
+                <div className="flex flex-col">
+                  <span className="font-medium">{sector.sector}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {sector.weight.toFixed(1)}% of Index
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  {sector.change > 0 ? (
+                    <>
+                      <ArrowUpRight className="h-4 w-4 text-stock-up" />
+                      <span className="text-sm text-stock-up">
+                        {sector.change.toFixed(2)}%
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDownRight className="h-4 w-4 text-stock-down" />
+                      <span className="text-sm text-stock-down">
+                        {Math.abs(sector.change).toFixed(2)}%
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            <Progress
-              value={sector.value}
-              className="h-2 bg-muted"
-              indicatorClassName={
-                sector.change > 0 ? "bg-stock-up" : "bg-stock-down"
-              }
-            />
+              <Progress
+                value={sector.weight}
+                className="h-2 bg-muted"
+                indicatorClassName={
+                  sector.change > 0 ? "bg-stock-up" : "bg-stock-down"
+                }
+              />
+            
           </CardContent>
         </Card>
       ))}

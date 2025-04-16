@@ -81,7 +81,7 @@ def get_sector_data():
     
     return data
 
-def init_sector_performance(app):
+def init_market_sector(app):
     """Initialize sector performance routes on the Flask app"""
     
     @app.route('/api/sectors')
@@ -91,7 +91,7 @@ def init_sector_performance(app):
         return jsonify(data)
     
     @app.route('/sector-performance/health', methods=['GET'])
-    def sector_performance_health():
+    def market_sector_health():
         """Health check endpoint for the sector performance tool"""
         return jsonify({"status": "ok", "service": "sector-performance"})
     

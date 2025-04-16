@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { IndianMarketSummary } from "@/components/market/market-summary";
+import { MarketSummary } from "@/components/market/market-summary";
 import { NewsFeed } from "@/components/market/news-feed";
 
 import {
@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart2, TrendingUp, Globe, Newspaper } from "lucide-react";
 
 import { MarketSectors } from "@/components/market/market-sectors";
-import { GlobalIndices } from "@/components/market/global-indices";
+import { MarketIndices } from "@/components/market/market-indices";
 
 
 export const metadata: Metadata = {
@@ -50,11 +50,11 @@ export default function Markets() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1">
                 {/* <h3 className="text-sm font-medium mb-3">Indian Market Indices</h3> */}
-                <IndianMarketSummary />
+                <MarketSummary />
               </div>
 
               <div className="lg:col-span-2">
-                <GlobalIndices />
+                <MarketIndices />
               </div>
             </div>
           </CardContent>

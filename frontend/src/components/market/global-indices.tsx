@@ -1,158 +1,152 @@
+"use client";
+
+import { useState, useEffect } from "react"; 
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface IndexData {
-  name: string;
   symbol: string;
-  value: number;
-  change: number;
-  changePercent: number;
-  region?: string;
+  name: string;
+  price: number | string;
+  change: number | string;
+}
+
+interface RegionData {
+  [region: string]: IndexData[];
 }
 
 export function GlobalIndices() {
-  // Sample global indices data
-  const indices: IndexData[] = [
-    {
-      name: "S&P 500",
-      symbol: "SPX",
-      value: 5245.47,
-      change: 15.23,
-      changePercent: 0.29,
-      region: "US",
-    },
-    {
-      name: "Dow Jones",
-      symbol: "DJI",
-      value: 38764.9,
-      change: 89.56,
-      changePercent: 0.23,
-      region: "US",
-    },
-    {
-      name: "Nasdaq",
-      symbol: "IXIC",
-      value: 16853.15,
-      change: 30.19,
-      changePercent: 0.18,
-      region: "US",
-    },
-    {
-      name: "Russell 2000",
-      symbol: "RUT",
-      value: 2067.85,
-      change: -12.46,
-      changePercent: -0.6,
-      region: "US",
-    },
-    {
-      name: "FTSE 100",
-      symbol: "FTSE",
-      value: 8164.99,
-      change: -28.74,
-      changePercent: -0.35,
-      region: "Europe",
-    },
-    {
-      name: "DAX",
-      symbol: "GDAXI",
-      value: 18317.84,
-      change: 45.67,
-      changePercent: 0.25,
-      region: "Europe",
-    },
-    {
-      name: "CAC 40",
-      symbol: "FCHI",
-      value: 8089.13,
-      change: 12.45,
-      changePercent: 0.15,
-      region: "Europe",
-    },
-    {
-      name: "Nikkei 225",
-      symbol: "N225",
-      value: 39836.62,
-      change: -156.38,
-      changePercent: -0.39,
-      region: "Asia",
-    },
-    {
-      name: "Shanghai",
-      symbol: "SSEC",
-      value: 3103.75,
-      change: 18.93,
-      changePercent: 0.61,
-      region: "Asia",
-    },
-    {
-      name: "Hang Seng",
-      symbol: "HSI",
-      value: 18122.39,
-      change: -142.57,
-      changePercent: -0.78,
-      region: "Asia",
-    },
-  ];
+  const [marketData, setMarketData] = useState<RegionData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("India");
 
-  const usIndices = indices.filter((index) => index.region === "US");
-  const europeIndices = indices.filter((index) => index.region === "Europe");
-  const asiaIndices = indices.filter((index) => index.region === "Asia");
+  // Function to fetch data
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/market-indices/data');
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setMarketData(data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+      setError("Failed to load market data. Please try again later.");
+      setLoading(false);
+    }
+  };
 
-  const renderIndices = (data: IndexData[]) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {data.map((index) => (
-        <Card key={index.symbol} className="bg-card/50 shadow-none">
-          <CardContent className="p-3">
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="font-medium">{index.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {index.symbol}
+  useEffect(() => {
+    // Initial data load
+    fetchData();
+    
+    // Set up polling instead of WebSocket
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000); // Poll every 10 seconds
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Rest of the component code remains the same...
+  
+  // Rendering logic remains the same
+  const renderIndices = (data: IndexData[] | undefined) => {
+    // Same implementation as before
+    if (!data || data.length === 0) {
+      return (
+        <Alert>
+          <AlertDescription>No data available for this region.</AlertDescription>
+        </Alert>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {data.map((index) => (
+          <Card key={index.symbol} className="bg-card/50 shadow-none">
+            <CardContent className="p-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-medium">{index.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {index.symbol}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-medium">
+                    {typeof index.price === 'number' 
+                      ? index.price.toLocaleString(undefined, {maximumFractionDigits: 2}) 
+                      : index.price}
+                  </div>
+                  <div className="flex items-center justify-end">
+                    {typeof index.change === 'number' ? (
+                      index.change > 0 ? (
+                        <>
+                          <ArrowUpRight className="h-4 w-4 text-stock-up" />
+                          <span className="text-sm text-stock-up">
+                            {index.change.toFixed(2)}%
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <ArrowDownRight className="h-4 w-4 text-stock-down" />
+                          <span className="text-sm text-stock-down">
+                            {Math.abs(Number(index.change)).toFixed(2)}%
+                          </span>
+                        </>
+                      )
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        {index.change}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="font-medium">
-                  {index.value.toLocaleString()}
-                </div>
-                <div className="flex items-center justify-end">
-                  {index.change > 0 ? (
-                    <>
-                      <ArrowUpRight className="h-4 w-4 text-stock-up" />
-                      <span className="text-sm text-stock-up">
-                        {index.change.toFixed(2)} (
-                        {index.changePercent.toFixed(2)}%)
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <ArrowDownRight className="h-4 w-4 text-stock-down" />
-                      <span className="text-sm text-stock-down">
-                        {Math.abs(index.change).toFixed(2)} (
-                        {Math.abs(index.changePercent).toFixed(2)}%)
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Get available region tabs from data
+  const regions = marketData ? Object.keys(marketData) : [];
 
   return (
-    <Tabs defaultValue="us" className="w-full">
-      <TabsList className="w-full grid grid-cols-3 mb-3">
-        <TabsTrigger value="us">US</TabsTrigger>
-        <TabsTrigger value="europe">Europe</TabsTrigger>
-        <TabsTrigger value="asia">Asia</TabsTrigger>
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="w-full grid" style={{ gridTemplateColumns: `repeat(${regions.length}, 1fr)` }}>
+        {regions.map(region => (
+          <TabsTrigger key={region} value={region}>{region}</TabsTrigger>
+        ))}
       </TabsList>
-      <TabsContent value="us">{renderIndices(usIndices)}</TabsContent>
-      <TabsContent value="europe">{renderIndices(europeIndices)}</TabsContent>
-      <TabsContent value="asia">{renderIndices(asiaIndices)}</TabsContent>
+      {regions.map(region => (
+        <TabsContent key={region} value={region}>
+          {renderIndices(marketData?.[region])}
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }

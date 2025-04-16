@@ -138,3 +138,12 @@
 .animate-text-pulse {
   animation: textPulse 3s ease-in-out infinite;
 }
+
+
+.text-stock-up {
+  color: #16a34a; /* Green for positive change */
+}
+
+.text-stock-down {
+  color: #dc2626; /* Red for negative change */
+}

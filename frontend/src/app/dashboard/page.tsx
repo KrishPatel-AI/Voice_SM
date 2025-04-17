@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 
 import { MarketSummary } from '@/components/market/market-summary';
 import { StockList } from '@/components/dashboard/stock-list';
-import { NewsFeed } from '@/components/market/news-feed';
+import { MarketNews } from '@/components/market/market-news';
 
 import Link from 'next/link';
 import {
@@ -278,7 +278,7 @@ const Dashboard = () => {
               <CardDescription>Recent financial headlines</CardDescription>
             </CardHeader>
             <CardContent>
-              <NewsFeed />
+              <MarketNews />
             </CardContent>
             <CardFooter>
               <Link href='/markets' className='w-full'>

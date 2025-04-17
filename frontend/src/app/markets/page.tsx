@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import { MarketSummary } from "@/components/market/market-summary";
-import { NewsFeed } from "@/components/market/news-feed";
+import { MarketNews } from "@/components/market/market-news";
 
 import {
   Card,
@@ -10,12 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart2, TrendingUp, Globe, Newspaper } from "lucide-react";
 
 import { MarketSectors } from "@/components/market/market-sectors";
 import { MarketIndices } from "@/components/market/market-indices";
-
 
 export const metadata: Metadata = {
   title: "Markets - StockWhisper",
@@ -49,7 +47,6 @@ export default function Markets() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-1">
-                {/* <h3 className="text-sm font-medium mb-3">Indian Market Indices</h3> */}
                 <MarketSummary />
               </div>
 
@@ -67,27 +64,12 @@ export default function Markets() {
             <CardHeader className="pb-2">
               <CardTitle className="text-xl flex items-center">
                 <Newspaper className="mr-2 h-5 w-5 text-primary" />
-                Financial News
+                Market News
               </CardTitle>
               <CardDescription>Latest market news and analysis</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="top" className="w-full">
-                <TabsList className="w-full grid grid-cols-3 mb-4">
-                  <TabsTrigger value="top">Top Stories</TabsTrigger>
-                  <TabsTrigger value="business">Business</TabsTrigger>
-                  <TabsTrigger value="tech">Technology</TabsTrigger>
-                </TabsList>
-                <TabsContent value="top">
-                  <NewsFeed />
-                </TabsContent>
-                <TabsContent value="business">
-                  <NewsFeed />
-                </TabsContent>
-                <TabsContent value="tech">
-                  <NewsFeed />
-                </TabsContent>
-              </Tabs>
+              <MarketNews />
             </CardContent>
           </Card>
         </div>

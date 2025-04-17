@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default function VoiceAssistant() {
   return (
     <div className="min-h-screen bg-background">
-    <ChatLayout>
-      <VoiceInterface />
-    </ChatLayout>
-  </div>
+      <ChatLayout>
+        <VoiceInterface />
+      </ChatLayout>
+    </div>
   );
 }

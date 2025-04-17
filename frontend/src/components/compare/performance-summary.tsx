@@ -1,4 +1,3 @@
-// frontend/src/components/compare/performance-summary.tsx
 "use client";
 import { useEffect, useState } from "react";
 import {
@@ -12,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
   TrendingDown,
-  AlertTriangle,
   ArrowDownRight,
   ArrowUpRight,
   Zap,
@@ -47,7 +45,6 @@ export function PerformanceSummary({ symbols }: Props) {
     if (symbols.length > 0) {
       setLoading(true);
 
-      // Get both history and metrics data
       Promise.all([
         fetch(
           `http://localhost:5000/api/compare/history?symbols=${symbols.join(
@@ -68,7 +65,6 @@ export function PerformanceSummary({ symbols }: Props) {
             const stockHistory = historyData[symbol] || [];
             const stockMetrics = metricsData[symbol] || {};
 
-            // Sort by date to get latest and previous day
             const sortedHistory = [...stockHistory].sort(
               (a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime()
             );
@@ -86,7 +82,6 @@ export function PerformanceSummary({ symbols }: Props) {
               };
             }
 
-            // Determine performance trend based on recent days
             let performance: "up" | "down" | "neutral" = "neutral";
             if (sortedHistory.length >= 3) {
               const recentPrices = sortedHistory
@@ -145,8 +140,8 @@ export function PerformanceSummary({ symbols }: Props) {
         const colorClass = isPositive
           ? "text-green-600"
           : isNegative
-          ? "text-red-600"
-          : "text-gray-600";
+            ? "text-red-600"
+            : "text-gray-600";
 
         return (
           <Card key={data.symbol} className={`overflow-hidden border-2 `}>
@@ -158,15 +153,13 @@ export function PerformanceSummary({ symbols }: Props) {
                     data.performance === "neutral" ? "outline" : "default"
                   }
                   className={`
-                    ${
-                      data.performance === "up"
-                        ? "bg-green-100 text-green-800 hover:bg-green-100"
-                        : ""
+                    ${data.performance === "up"
+                      ? "bg-green-100 text-green-800 hover:bg-green-100"
+                      : ""
                     } 
-                    ${
-                      data.performance === "down"
-                        ? "bg-red-100 text-red-800 hover:bg-red-100"
-                        : ""
+                    ${data.performance === "down"
+                      ? "bg-red-100 text-red-800 hover:bg-red-100"
+                      : ""
                     }
                   `}
                 >

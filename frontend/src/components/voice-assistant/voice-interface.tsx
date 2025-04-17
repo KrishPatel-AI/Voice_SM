@@ -47,7 +47,6 @@ export function VoiceInterface() {
   const processMessage = async (text: string) => {
     if (!text.trim()) return;
 
-    // Add user message to chat
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -74,7 +73,6 @@ export function VoiceInterface() {
 
       const data = await response.json();
 
-      // Add assistant response to chat
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
@@ -91,7 +89,6 @@ export function VoiceInterface() {
     }
   };
 
-  // Handle Enter key to send message
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -99,7 +96,6 @@ export function VoiceInterface() {
     }
   };
 
-  // Health check to confirm backend connectivity
   useEffect(() => {
     const checkBackendHealth = async () => {
       try {
@@ -118,7 +114,6 @@ export function VoiceInterface() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)]  mx-auto   overflow-hidden">
-      {/* Fixed Header */}
       <div className=" py-3 px-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -131,7 +126,6 @@ export function VoiceInterface() {
         </div>
       </div>
 
-      {/* Main Content - Scrollable Chat Area */}
       <div className="flex flex-col flex-1 overflow-hidden ">
         {error && (
           <div className="px-4 pt-4">
@@ -142,7 +136,6 @@ export function VoiceInterface() {
           </div>
         )}
 
-        {/* Scrollable Chat Content */}
         <div className="flex-1 overflow-y-auto p-4" ref={scrollAreaRef}>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
@@ -213,7 +206,6 @@ export function VoiceInterface() {
           )}
         </div>
 
-        {/* Fixed Input Area at Bottom */}
         <div className=" px-30 bg-background py-4">
           <div className="flex items-end gap-4">
             <div className="flex-1 relative align-center gap-2">
@@ -226,7 +218,6 @@ export function VoiceInterface() {
                 disabled={isProcessing}
               />
               <div>
-
                 <Separator orientation="vertical" />
               </div>
               <Button

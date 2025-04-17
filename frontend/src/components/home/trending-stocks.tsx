@@ -147,11 +147,9 @@ export function TrendingStocks() {
                         )}
                       </div>
                     </div>
-                    {/* <Link to={`/watchlist?symbol=${stock.symbol}`}> */}
                     <Button variant="outline" size="sm">
                       View
                     </Button>
-                    {/* </Link> */}
                   </div>
                 </CardContent>
               </Card>

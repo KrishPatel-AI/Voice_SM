@@ -1,4 +1,3 @@
-// frontend/src/app/compare/page.tsx
 "use client";
 import { useState } from "react";
 import {
@@ -9,19 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  LineChart, 
-  BarChart, 
-  TrendingUp, 
-  Search, 
-  Info, 
-  Clock,
-  ArrowUpRight,
-  ArrowDownRight,
-  Percent,
-  DollarSign,
-  Calendar
-} from "lucide-react";
+import { LineChart, BarChart, TrendingUp, Search, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StockSearchBar } from "@/components/compare/stock-search";
 import { ComparisonMetrics } from "@/components/compare/comparison-metrics";
@@ -32,7 +19,7 @@ import { PerformanceSummary } from "@/components/compare/performance-summary";
 export default function Compare() {
   const [selected, setSelected] = useState<string[]>([]);
   const [timeframe, setTimeframe] = useState("1mo");
-  
+
   return (
     <div className="container px-4 md:px-12 py-8">
       <div className="mb-6">
@@ -41,7 +28,8 @@ export default function Compare() {
           Stock Comparison
         </h1>
         <p className="text-muted-foreground">
-          Analyze and compare different stocks side by side with detailed metrics and visualizations
+          Analyze and compare different stocks side by side with detailed
+          metrics and visualizations
         </p>
       </div>
 
@@ -93,7 +81,7 @@ export default function Compare() {
                   History
                 </TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="chart">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
@@ -111,7 +99,9 @@ export default function Compare() {
                     ].map((period) => (
                       <Button
                         key={period.value}
-                        variant={timeframe === period.value ? "default" : "outline"}
+                        variant={
+                          timeframe === period.value ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setTimeframe(period.value)}
                         className="h-8"
@@ -125,11 +115,11 @@ export default function Compare() {
                   <ComparisonChart symbols={selected} timeframe={timeframe} />
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="metrics">
                 <ComparisonMetrics symbols={selected} />
               </TabsContent>
-              
+
               <TabsContent value="history">
                 <div className="mb-4">
                   <div className="flex gap-1 mb-2">
@@ -141,7 +131,9 @@ export default function Compare() {
                     ].map((period) => (
                       <Button
                         key={period.value}
-                        variant={timeframe === period.value ? "default" : "outline"}
+                        variant={
+                          timeframe === period.value ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setTimeframe(period.value)}
                       >

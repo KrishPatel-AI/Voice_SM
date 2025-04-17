@@ -10,9 +10,8 @@ interface ResponseDisplayProps {
 export function ResponseDisplay({ response, stockData }: ResponseDisplayProps) {
   if (!response) return null;
 
-  // Check if the response contains any stock data patterns
   const hasStockData = response.match(/\+\d+\.\d+%|\-\d+\.\d+%/g) || stockData;
-  
+
   const isPositive = stockData && stockData.change_percent > 0;
 
   return (
@@ -24,8 +23,8 @@ export function ResponseDisplay({ response, stockData }: ResponseDisplayProps) {
           variant="outline"
           className={cn(
             "ml-auto border-primary/20",
-            hasStockData 
-              ? isPositive 
+            hasStockData
+              ? isPositive
                 ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
                 : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"
               : "bg-primary/10 text-primary"
@@ -34,29 +33,33 @@ export function ResponseDisplay({ response, stockData }: ResponseDisplayProps) {
           {hasStockData ? "Market Data" : "Response"}
         </Badge>
       </div>
-      
+
       <div className="rounded-lg bg-card p-4 shadow-sm border">
-        {/* Stock data visualization, if available */}
         {stockData && (
           <div className="mb-4 border-b pb-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold">{stockData.company_name} ({stockData.ticker})</h3>
-              <div className={cn(
-                "flex items-center text-sm font-medium",
-                isPositive ? "text-emerald-600" : "text-red-600"
-              )}>
+              <h3 className="font-semibold">
+                {stockData.company_name} ({stockData.ticker})
+              </h3>
+              <div
+                className={cn(
+                  "flex items-center text-sm font-medium",
+                  isPositive ? "text-emerald-600" : "text-red-600"
+                )}
+              >
                 {isPositive ? (
                   <TrendingUp className="mr-1 h-4 w-4" />
                 ) : (
                   <TrendingDown className="mr-1 h-4 w-4" />
                 )}
-                ${stockData.current_price.toFixed(2)} 
+                ${stockData.current_price.toFixed(2)}
                 <span className="ml-1">
-                  ({isPositive ? "+" : ""}{stockData.change_percent.toFixed(2)}%)
+                  ({isPositive ? "+" : ""}
+                  {stockData.change_percent.toFixed(2)}%)
                 </span>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
               <div>
                 <div className="text-muted-foreground">Open</div>
@@ -75,7 +78,7 @@ export function ResponseDisplay({ response, stockData }: ResponseDisplayProps) {
                 <div>{stockData.volume.toLocaleString()}</div>
               </div>
             </div>
-            
+
             {/* Simple visualization of 5-day trend */}
             {stockData.trend && stockData.trend.length > 0 && (
               <div className="mt-3 flex flex-col">
@@ -88,18 +91,16 @@ export function ResponseDisplay({ response, stockData }: ResponseDisplayProps) {
                     const min = Math.min(...stockData.trend);
                     const max = Math.max(...stockData.trend);
                     const range = max - min;
-                    const height = range === 0 ? 50 : ((price - min) / range) * 100;
-                    
+                    const height =
+                      range === 0 ? 50 : ((price - min) / range) * 100;
+
                     return (
-                      <div 
-                        key={idx} 
-                        className="relative flex-1 group"
-                      >
-                        <div 
+                      <div key={idx} className="relative flex-1 group">
+                        <div
                           className={cn(
                             "w-full rounded-t",
-                            price > stockData.trend[Math.max(0, idx-1)] 
-                              ? "bg-emerald-500" 
+                            price > stockData.trend[Math.max(0, idx - 1)]
+                              ? "bg-emerald-500"
                               : "bg-red-500"
                           )}
                           style={{ height: `${Math.max(10, height)}%` }}
@@ -115,7 +116,7 @@ export function ResponseDisplay({ response, stockData }: ResponseDisplayProps) {
             )}
           </div>
         )}
-        
+
         <p className="whitespace-pre-line">{response}</p>
       </div>
     </div>

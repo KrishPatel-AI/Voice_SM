@@ -1,16 +1,15 @@
-// frontend/src/components/compare/compare-container.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { StockSearchBar } from "./stock-search";
 import { ComparisonChart } from "./compare-chart";
 import { PerformanceSummary } from "./performance-summary";
 import { ComparisonMetrics } from "./comparison-metrics";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,15 +30,13 @@ export function StockComparisonContainer() {
   const [selectedSymbols, setSelectedSymbols] = useState<string[]>([]);
   const [timeframe, setTimeframe] = useState("1mo");
   const [activeTab, setActiveTab] = useState("chart");
-  
-  // Handle selecting stocks
+
   const handleStockSelection = (stocks: string[]) => {
     setSelectedSymbols(stocks);
-    // Save to local storage
+
     localStorage.setItem("comparisonSymbols", JSON.stringify(stocks));
   };
-  
-  // Load any previously selected symbols from local storage
+
   useEffect(() => {
     const savedSymbols = localStorage.getItem("comparisonSymbols");
     if (savedSymbols) {
@@ -53,8 +50,7 @@ export function StockComparisonContainer() {
       }
     }
   }, []);
-  
-  // Handle timeframe change
+
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
   };
@@ -66,19 +62,26 @@ export function StockComparisonContainer() {
           <CardTitle>Stock Comparison</CardTitle>
         </CardHeader>
         <CardContent>
-          <StockSearchBar selected={selectedSymbols} setSelected={handleStockSelection} />
+          <StockSearchBar
+            selected={selectedSymbols}
+            setSelected={handleStockSelection}
+          />
         </CardContent>
       </Card>
-      
+
       {selectedSymbols.length > 0 && (
         <>
           <PerformanceSummary symbols={selectedSymbols} />
-          
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle>Performance Analysis</CardTitle>
               <div className="flex items-center justify-between mt-2">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
+                <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="w-full sm:w-auto"
+                >
                   <TabsList className="grid grid-cols-3 w-full sm:w-auto">
                     <TabsTrigger value="chart" className="flex items-center">
                       <LineChart className="h-4 w-4 mr-1" />
@@ -94,7 +97,7 @@ export function StockComparisonContainer() {
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
-                
+
                 <Select value={timeframe} onValueChange={handleTimeframeChange}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select timeframe" />
@@ -109,20 +112,20 @@ export function StockComparisonContainer() {
                 </Select>
               </div>
             </CardHeader>
-            
+
             <CardContent className="pt-4">
               <TabsContent value="chart" className="mt-0">
-                <ComparisonChart symbols={selectedSymbols} timeframe={timeframe} />
+                <ComparisonChart
+                  symbols={selectedSymbols}
+                  timeframe={timeframe}
+                />
               </TabsContent>
-              
+
               <TabsContent value="metrics" className="mt-0">
                 <ComparisonMetrics symbols={selectedSymbols} />
               </TabsContent>
-              
-              <TabsContent value="history" className="mt-0">
-                {/* Assuming you have a ComparisonHistory component */}
-                {/* <ComparisonHistory symbols={selectedSymbols} timeframe={timeframe} /> */}
-              </TabsContent>
+
+              <TabsContent value="history" className="mt-0"></TabsContent>
             </CardContent>
           </Card>
         </>

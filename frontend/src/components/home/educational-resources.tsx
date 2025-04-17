@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { JSX } from 'react';
+import { JSX } from "react";
 
 import {
   BookOpen,

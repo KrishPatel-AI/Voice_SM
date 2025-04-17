@@ -2,14 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  X,
-  Search,
-  Loader2,
-  ArrowUpRight,
-  ArrowDownRight,
-  Minus,
-} from "lucide-react";
+import { X, Loader2, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -37,7 +30,6 @@ export function StockSearchBar({ selected, setSelected }: Props) {
   const [suggestions, setSuggestions] = useState<StockSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Search function - fetch real-time data from the API
   useEffect(() => {
     if (input.length < 1) {
       setSuggestions([]);
@@ -46,7 +38,6 @@ export function StockSearchBar({ selected, setSelected }: Props) {
 
     setLoading(true);
 
-    // Create an abort controller for the fetch request
     const controller = new AbortController();
 
     const fetchStockSuggestions = async () => {
@@ -65,7 +56,7 @@ export function StockSearchBar({ selected, setSelected }: Props) {
         }
 
         const data = await response.json();
-        setSuggestions(data.slice(0, 8)); // Limit to 8 results
+        setSuggestions(data.slice(0, 8));
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Error fetching stock suggestions:", error);
@@ -76,7 +67,6 @@ export function StockSearchBar({ selected, setSelected }: Props) {
       }
     };
 
-    // Debounce the API call
     const timer = setTimeout(() => {
       fetchStockSuggestions();
     }, 300);
@@ -95,7 +85,6 @@ export function StockSearchBar({ selected, setSelected }: Props) {
   };
 
   const handleRemove = (symbolToRemove: string) => {
-    // Create a new array without the symbol we want to remove
     const updatedSelected = selected.filter(
       (symbol) => symbol !== symbolToRemove
     );
@@ -164,13 +153,12 @@ export function StockSearchBar({ selected, setSelected }: Props) {
                               </div>
                               {stock.change !== undefined && (
                                 <div
-                                  className={`text-xs flex items-center ${
-                                    stock.change > 0
+                                  className={`text-xs flex items-center ${stock.change > 0
                                       ? "text-green-500"
                                       : stock.change < 0
-                                      ? "text-red-500"
-                                      : "text-gray-500"
-                                  }`}
+                                        ? "text-red-500"
+                                        : "text-gray-500"
+                                    }`}
                                 >
                                   {stock.change > 0 ? (
                                     <ArrowUpRight className="h-3 w-3 mr-1" />

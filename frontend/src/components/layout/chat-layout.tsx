@@ -1,5 +1,5 @@
 import { ChatSidebar } from "../voice-assistant/chat-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 interface ChatLayoutProps {
   children: React.ReactNode;

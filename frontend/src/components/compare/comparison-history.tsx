@@ -1,4 +1,3 @@
-// frontend/src/components/compare/comparison-history.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,17 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  ArrowUpRight, 
-  ArrowDownRight, 
+import {
+  ArrowUpRight,
+  ArrowDownRight,
   Minus,
   Calendar,
   Loader2,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface StockData {
   Date: string;
@@ -57,7 +54,7 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
           setHistoricalData(data);
           setLoading(false);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error fetching history:", err);
           setLoading(false);
         });
@@ -66,10 +63,10 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -79,7 +76,7 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
     const percentChange = (change / previous) * 100;
     return {
       value: change,
-      percent: percentChange
+      percent: percentChange,
     };
   };
 
@@ -92,9 +89,8 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
       );
     }
 
-    // Sort data by date (newest first)
-    const sortedData = [...historicalData[symbol]].sort((a, b) => 
-      new Date(b.Date).getTime() - new Date(a.Date).getTime()
+    const sortedData = [...historicalData[symbol]].sort(
+      (a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime()
     );
 
     return (
@@ -115,12 +111,12 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
               const change = calculateChange(row.Close, previousDay?.Close);
               const isPositive = change.value > 0;
               const isNegative = change.value < 0;
-              const colorClass = isPositive 
-                ? "text-green-600" 
-                : isNegative 
-                  ? "text-red-600" 
-                  : "text-gray-600";
-              
+              const colorClass = isPositive
+                ? "text-green-600"
+                : isNegative
+                ? "text-red-600"
+                : "text-gray-600";
+
               return (
                 <TableRow key={`${symbol}-${index}`}>
                   <TableCell className="font-medium whitespace-nowrap">
@@ -137,29 +133,40 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
                         <Minus className="h-4 w-4" />
                       )}
                       <span>${Math.abs(change.value).toFixed(2)}</span>
-                      <span className="text-xs">({change.percent.toFixed(2)}%)</span>
+                      <span className="text-xs">
+                        ({change.percent.toFixed(2)}%)
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell whitespace-nowrap">
                     {row.Volume.toLocaleString()}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
-                    {row.High && row.Low ? 
+                    {row.High && row.Low ? (
                       <div className="flex gap-2 items-center whitespace-nowrap">
-                        <span className="text-muted-foreground text-xs">L: ${row.Low.toFixed(2)}</span>
+                        <span className="text-muted-foreground text-xs">
+                          L: ${row.Low.toFixed(2)}
+                        </span>
                         <div className="h-[6px] w-16 bg-gray-200 rounded-full relative">
-                          <div 
+                          <div
                             className="absolute top-0 bottom-0 bg-primary rounded-full"
                             style={{
-                              left: `${((row.Close - row.Low) / (row.High - row.Low)) * 100}%`,
-                              width: '6px',
-                              transform: 'translateX(-50%)',
+                              left: `${
+                                ((row.Close - row.Low) / (row.High - row.Low)) *
+                                100
+                              }%`,
+                              width: "6px",
+                              transform: "translateX(-50%)",
                             }}
                           />
                         </div>
-                        <span className="text-muted-foreground text-xs">H: ${row.High.toFixed(2)}</span>
+                        <span className="text-muted-foreground text-xs">
+                          H: ${row.High.toFixed(2)}
+                        </span>
                       </div>
-                    : "N/A"}
+                    ) : (
+                      "N/A"
+                    )}
                   </TableCell>
                 </TableRow>
               );
@@ -173,7 +180,9 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
   if (symbols.length === 0) {
     return (
       <div className="flex items-center justify-center h-[400px]">
-        <p className="text-muted-foreground">Add symbols to view historical data</p>
+        <p className="text-muted-foreground">
+          Add symbols to view historical data
+        </p>
       </div>
     );
   }
@@ -189,14 +198,6 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
 
   return (
     <div>
-      {/* <div className="flex items-center gap-2 mb-4 flex-wrap">
-        {symbols.map((symbol) => (
-          <Badge key={symbol} className="px-3 py-1" variant="secondary">
-            {symbol}
-          </Badge>
-        ))}
-      </div> */}
-
       <Tabs defaultValue={symbols[0]} className="w-full">
         <TabsList className="mb-4">
           {symbols.map((symbol) => (
@@ -205,7 +206,7 @@ export function ComparisonHistory({ symbols, timeframe }: Props) {
             </TabsTrigger>
           ))}
         </TabsList>
-        
+
         {symbols.map((symbol) => (
           <TabsContent key={symbol} value={symbol}>
             {renderStockHistory(symbol)}

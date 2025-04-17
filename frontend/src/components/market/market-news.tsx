@@ -58,7 +58,6 @@ export function MarketNews() {
     fetchNews();
   }, []);
 
-  // Reset to first page when filter changes
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
@@ -69,13 +68,11 @@ export function MarketNews() {
       item.source.toLowerCase().includes(filter.toLowerCase())
   );
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentNewsItems = filteredNews.slice(startIndex, endIndex);
 
-  // Function to extract ticker symbols from title or summary
   const extractTickers = (text: string) => {
     const tickerPattern = /\$[A-Z]+|\b[A-Z]{1,5}\b/g;
     const matches = text.match(tickerPattern) || [];
@@ -90,7 +87,6 @@ export function MarketNews() {
       .slice(0, 3);
   };
 
-  // Simple sentiment analysis based on keywords
   const analyzeSentiment = (
     text: string
   ): "positive" | "negative" | "neutral" => {
@@ -131,7 +127,6 @@ export function MarketNews() {
     return "neutral";
   };
 
-  // Generate page numbers for pagination
   const generatePaginationItems = () => {
     if (totalPages <= 5) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -210,7 +205,6 @@ export function MarketNews() {
                 <Card key={index} className="cursor-pointer">
                   <CardContent className="px-2 py-0">
                     <div className="flex gap-4">
-                      {/* Square image on left */}
                       <Avatar className="h-20 w-20 rounded-md">
                         <AvatarImage
                           src={news.banner_image}
@@ -222,7 +216,6 @@ export function MarketNews() {
                         </AvatarFallback>
                       </Avatar>
 
-                      {/* Content area */}
                       <div className="flex-1 flex flex-col">
                         <div className="flex justify-between items-start">
                           <h3 className="font-medium mb-1 line-clamp-2">
@@ -275,7 +268,6 @@ export function MarketNews() {
               );
             })}
 
-            {/* Pagination controls */}
             {totalPages > 1 && (
               <Pagination className="mt-6">
                 <PaginationContent>

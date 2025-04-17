@@ -1,4 +1,3 @@
-// components/layout/navbar.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,14 +5,10 @@ import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { BarChart2, Eye, LineChart } from "lucide-react";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import {
@@ -46,65 +41,12 @@ export function Navbar() {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>Markets</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-2 w-[250px]">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href="/markets"
-                            className="flex flex-col p-2 hover:bg-accent rounded-md"
-                          >
-                            <div className="flex items-center gap-2">
-                              <BarChart2 className="h-4 w-4" />
-                              <span className="text-sm font-medium">
-                                Markets
-                              </span>
-                            </div>
-                            <div className="text-xs text-muted-foreground ml-6 -mt-1">
-                              Market summary and news
-                            </div>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href="/watchlist"
-                            className="flex flex-col p-2 hover:bg-accent rounded-md"
-                          >
-                            <div className="flex items-center gap-2">
-                              <Eye className="h-4 w-4" />
-                              <span className="text-sm font-medium">
-                                Watchlist
-                              </span>
-                            </div>
-                            <div className="text-xs text-muted-foreground ml-6 -mt-1">
-                              Track your favorite stocks
-                            </div>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href="/compare"
-                            className="flex gap-2 p-2 hover:bg-accent rounded-md"
-                          >
-                            <div className="flex items-center gap-2">
-                              <LineChart className="h-4 w-4" />
-                              <span className="text-sm font-medium">
-                                Compare
-                              </span>
-                            </div>
-                            <div className="text-xs text-muted-foreground -mt-1 ml-6">
-                              Compare multiple stocks
-                            </div>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
+                  <Link
+                    href="/markets"
+                    className={cn(navigationMenuTriggerStyle(), "group")}
+                  >
+                    Market
+                  </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link
@@ -116,16 +58,16 @@ export function Navbar() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link
-                    href="/portfolio"
+                    href="/compare"
                     className={cn(navigationMenuTriggerStyle(), "group")}
                   >
-                    Portfolio
+                    Compare Stocks
                   </Link>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </nav>
-        </div> 
+        </div>
 
         <div className="flex items-center gap-4">
           <SignedIn>
@@ -143,5 +85,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  ); 
+  );
 }

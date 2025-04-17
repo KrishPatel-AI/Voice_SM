@@ -1,4 +1,3 @@
-// app/sso-callback/page.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -25,7 +24,6 @@ export default function SSOCallback() {
       }
     }
 
-    // Try to handle the callback for sign-up
     async function handleSignUpCallback() {
       try {
         await signUp.authenticateWithRedirect({
@@ -38,7 +36,6 @@ export default function SSOCallback() {
       }
     }
 
-    // Try both since we don't know which flow the user is in
     handleSignInCallback().catch(() => handleSignUpCallback());
   }, [isSignInLoaded, isSignUpLoaded, signIn, signUp]);
 

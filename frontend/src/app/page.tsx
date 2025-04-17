@@ -1,4 +1,3 @@
-// app/page.tsx
 import { HeroSection } from "@/components/home/hero-section";
 import { FeatureSection } from "@/components/home/feature-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
@@ -15,6 +14,6 @@ export default function Home() {
       <TestimonialsSection />
       <EducationalResources />
       <CallToAction />
-    </div> 
+    </div>
   );
 }

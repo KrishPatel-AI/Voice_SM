@@ -11,7 +11,7 @@ export function HeroSection() {
       <div className="container grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
         <div className="space-y-6">
           <div className="space-y-4">
-            <Badge variant="outline" >
+            <Badge variant="outline">
               Introducing <span className="text-primary gap-0">Voice</span>SM
             </Badge>
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">

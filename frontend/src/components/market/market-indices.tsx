@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,12 +23,11 @@ export function MarketIndices() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("India");
 
-  // Function to fetch data
   const fetchData = async () => {
     try {
-      const response = await fetch('/market-indices/data');
+      const response = await fetch("/market-indices/data");
       if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        throw new Error("Failed to fetch data");
       }
       const data = await response.json();
       setMarketData(data);
@@ -41,27 +40,22 @@ export function MarketIndices() {
   };
 
   useEffect(() => {
-    // Initial data load
     fetchData();
-    
-    // Set up polling instead of WebSocket
+
     const interval = setInterval(() => {
       fetchData();
-    }, 10000); // Poll every 10 seconds
-    
-    // Clean up interval on component unmount
+    }, 10000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // Rest of the component code remains the same...
-  
-  // Rendering logic remains the same
   const renderIndices = (data: IndexData[] | undefined) => {
-    // Same implementation as before
     if (!data || data.length === 0) {
       return (
         <Alert>
-          <AlertDescription>No data available for this region.</AlertDescription>
+          <AlertDescription>
+            No data available for this region.
+          </AlertDescription>
         </Alert>
       );
     }
@@ -80,12 +74,14 @@ export function MarketIndices() {
                 </div>
                 <div className="text-right">
                   <div className="font-medium">
-                    {typeof index.price === 'number' 
-                      ? index.price.toLocaleString(undefined, {maximumFractionDigits: 2}) 
+                    {typeof index.price === "number"
+                      ? index.price.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })
                       : index.price}
                   </div>
                   <div className="flex items-center justify-end">
-                    {typeof index.change === 'number' ? (
+                    {typeof index.change === "number" ? (
                       index.change > 0 ? (
                         <>
                           <ArrowUpRight className="h-4 w-4 text-stock-up" />
@@ -132,17 +128,21 @@ export function MarketIndices() {
     );
   }
 
-  // Get available region tabs from data
   const regions = marketData ? Object.keys(marketData) : [];
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="w-full grid" style={{ gridTemplateColumns: `repeat(${regions.length}, 1fr)` }}>
-        {regions.map(region => (
-          <TabsTrigger key={region} value={region}>{region}</TabsTrigger>
+      <TabsList
+        className="w-full grid"
+        style={{ gridTemplateColumns: `repeat(${regions.length}, 1fr)` }}
+      >
+        {regions.map((region) => (
+          <TabsTrigger key={region} value={region}>
+            {region}
+          </TabsTrigger>
         ))}
       </TabsList>
-      {regions.map(region => (
+      {regions.map((region) => (
         <TabsContent key={region} value={region}>
           {renderIndices(marketData?.[region])}
         </TabsContent>

@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  X, 
-  Search, 
+import {
+  X,
+  Search,
   Loader2,
   ArrowUpRight,
   ArrowDownRight,
-  Minus
+  Minus,
 } from "lucide-react";
 import {
   Command,
@@ -45,32 +45,37 @@ export function StockSearchBar({ selected, setSelected }: Props) {
     }
 
     setLoading(true);
-    
+
     // Create an abort controller for the fetch request
     const controller = new AbortController();
-    
+
     const fetchStockSuggestions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/search/stocks?query=${encodeURIComponent(input)}`, {
-          signal: controller.signal
-        });
-        
+        const response = await fetch(
+          `http://localhost:5000/api/search/stocks?query=${encodeURIComponent(
+            input
+          )}`,
+          {
+            signal: controller.signal,
+          }
+        );
+
         if (!response.ok) {
-          throw new Error('Failed to fetch stock suggestions');
+          throw new Error("Failed to fetch stock suggestions");
         }
-        
+
         const data = await response.json();
         setSuggestions(data.slice(0, 8)); // Limit to 8 results
       } catch (error) {
-        if (error.name !== 'AbortError') {
-          console.error('Error fetching stock suggestions:', error);
+        if (error.name !== "AbortError") {
+          console.error("Error fetching stock suggestions:", error);
           setSuggestions([]);
         }
       } finally {
         setLoading(false);
       }
     };
-    
+
     // Debounce the API call
     const timer = setTimeout(() => {
       fetchStockSuggestions();
@@ -91,7 +96,9 @@ export function StockSearchBar({ selected, setSelected }: Props) {
 
   const handleRemove = (symbolToRemove: string) => {
     // Create a new array without the symbol we want to remove
-    const updatedSelected = selected.filter(symbol => symbol !== symbolToRemove);
+    const updatedSelected = selected.filter(
+      (symbol) => symbol !== symbolToRemove
+    );
     setSelected(updatedSelected);
   };
 
@@ -108,20 +115,18 @@ export function StockSearchBar({ selected, setSelected }: Props) {
       <div className="flex gap-2 flex-col sm:flex-row">
         <div className="relative flex-1">
           <Command className="rounded-lg border shadow-md">
-            <div className="flex items-center border-b px-3">
-              <Search className="h-4 w-4 text-muted-foreground mr-2" />
-              <CommandInput
-                placeholder="Search by stock symbol or company name..."
-                value={input}
-                onValueChange={setInput}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && input.trim()) {
-                    handleManualAdd();
-                  }
-                }}
-                className="flex-1 h-10"
-              />
-            </div>
+            <CommandInput
+              placeholder="Search by stock symbol or company name..."
+              value={input}
+              onValueChange={setInput}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && input.trim()) {
+                  handleManualAdd();
+                }
+              }}
+              className="flex-1 h-10"
+            />
+
             {input.length > 0 && (
               <CommandList>
                 <CommandEmpty>
@@ -139,7 +144,7 @@ export function StockSearchBar({ selected, setSelected }: Props) {
                 {!loading && suggestions.length > 0 && (
                   <CommandGroup heading="Stocks">
                     {suggestions.map((stock) => (
-                      <CommandItem 
+                      <CommandItem
                         key={stock.symbol}
                         value={stock.symbol}
                         onSelect={() => handleAddSymbol(stock.symbol)}
@@ -151,18 +156,22 @@ export function StockSearchBar({ selected, setSelected }: Props) {
                               {stock.name} • {stock.exchange}
                             </div>
                           </div>
-                          
+
                           {stock.price !== undefined && (
                             <div className="flex flex-col items-end">
-                              <div className="font-medium">${stock.price.toFixed(2)}</div>
+                              <div className="font-medium">
+                                ${stock.price.toFixed(2)}
+                              </div>
                               {stock.change !== undefined && (
-                                <div className={`text-xs flex items-center ${
-                                  stock.change > 0 
-                                    ? "text-green-500" 
-                                    : stock.change < 0 
-                                      ? "text-red-500" 
+                                <div
+                                  className={`text-xs flex items-center ${
+                                    stock.change > 0
+                                      ? "text-green-500"
+                                      : stock.change < 0
+                                      ? "text-red-500"
                                       : "text-gray-500"
-                                }`}>
+                                  }`}
+                                >
                                   {stock.change > 0 ? (
                                     <ArrowUpRight className="h-3 w-3 mr-1" />
                                   ) : stock.change < 0 ? (
@@ -188,12 +197,12 @@ export function StockSearchBar({ selected, setSelected }: Props) {
           Add Symbol
         </Button>
       </div>
-      
+
       <div className="flex gap-2 flex-wrap">
         {selected.map((symbol) => (
-          <Badge 
-            key={symbol} 
-            variant="secondary" 
+          <Badge
+            key={symbol}
+            variant="secondary"
             className="flex items-center gap-1 px-3 py-1.5 text-sm bg-primary/10"
           >
             {symbol}
@@ -202,9 +211,9 @@ export function StockSearchBar({ selected, setSelected }: Props) {
               onClick={() => handleRemove(symbol)}
               className="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
-              <X 
-                size={14} 
-                className="cursor-pointer hover:text-red-500 transition-colors" 
+              <X
+                size={14}
+                className="cursor-pointer hover:text-red-500 transition-colors"
               />
             </button>
           </Badge>

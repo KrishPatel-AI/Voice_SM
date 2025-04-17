@@ -14,7 +14,7 @@ from tools.market_indices import init_market_indices
 from tools.market_sector import init_market_sector
 from tools.compare import init_compare
 from tools.stock_search import init_stock_search
-from tools.financial_news import init_financial_news
+from tools.market_news import init_market_news
 
 # Initialize tools
 init_financial_assistant(app)
@@ -22,7 +22,7 @@ init_market_indices(app, sock)
 init_market_sector(app)
 init_compare(app)
 init_stock_search(app)
-init_financial_news(app)
+init_market_news(app)
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -30,7 +30,7 @@ def health_check():
     return jsonify({
         "status": "ok", 
         "service": "unified-tools-server",
-        "tools": ["financial_assistant", "market_indices", "market_sector","compare", "stock_search", "financial_news"]
+        "tools": ["financial_assistant", "market_indices", "market_sector","compare", "stock_search", "market_news"]
     })
 
 if __name__ == '__main__':

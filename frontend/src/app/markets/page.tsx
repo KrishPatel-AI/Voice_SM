@@ -16,7 +16,7 @@ import { MarketSectors } from "@/components/market/market-sectors";
 import { MarketIndices } from "@/components/market/market-indices";
 
 export const metadata: Metadata = {
-  title: "Markets - StockWhisper",
+  title: "Markets - VoiceSM",
   description: "Global market summary and latest financial news",
 };
 

@@ -4,10 +4,8 @@ import { VoiceInterface } from "@/components/voice-assistant/voice-interface";
 
 import { ChatLayout } from "@/components/layout/chat-layout";
 
-import { Brain } from "lucide-react";
-
 export const metadata: Metadata = {
-  title: "Voice Assistant - GroqIt",
+  title: "AI Voice Assistant - VoiceSM",
   description: "AI-powered voice assistant for financial market insights",
 };
 

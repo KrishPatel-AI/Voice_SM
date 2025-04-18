@@ -1,19 +1,19 @@
 import { HeroSection } from "@/components/home/hero-section";
-import { FeatureSection } from "@/components/home/feature-section";
-import { TestimonialsSection } from "@/components/home/testimonials-section";
-import { EducationalResources } from "@/components/home/educational-resources";
+import { KeyFeatures } from "@/components/home/key-features";
+import { Authentication } from "@/components/home/authentication";
 import { CallToAction } from "@/components/home/call-to-action";
-import { TrendingStocks } from "@/components/home/trending-stocks";
+import { Market } from "@/components/home/market";
+import { Footer } from "@/components/layout/footer";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       <HeroSection />
-      <TrendingStocks />
-      <FeatureSection />
-      <TestimonialsSection />
-      <EducationalResources />
       <CallToAction />
+      <KeyFeatures />
+      <Market />
+      <Authentication />
+      <Footer/>
     </div>
   );
 }

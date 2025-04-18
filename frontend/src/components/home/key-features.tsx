@@ -1,4 +1,4 @@
-import { BarChart2, Lightbulb, Mic, Shield } from "lucide-react";
+import { BarChart2, Brain, Mic, Shield } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export function FeatureSection() {
+export function KeyFeatures() {
   const features = [
     {
       icon: <Mic className="h-10 w-10 text-primary" />,
@@ -22,7 +22,7 @@ export function FeatureSection() {
         "Access up-to-the-minute stock prices, market trends, and financial news.",
     },
     {
-      icon: <Lightbulb className="h-10 w-10 text-primary" />,
+      icon: <Brain className="h-10 w-10 text-primary" />,
       title: "Intelligent Analysis",
       description:
         "Get AI-powered insights and recommendations based on current market conditions.",

@@ -1,7 +1,7 @@
 import requests
 import os
 
-API_KEY = os.environ.get("ALPHA_VANTAGE_API_KEY", "LDBWUDPEC8ODKC1X")
+API_KEY = os.environ.get("ALPHA_VANTAGE_API_KEY", "Q2RPRXKJ1TUZ1QXJ")
 NEWS_URL = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&topics=finance&apikey={API_KEY}"
 
 
